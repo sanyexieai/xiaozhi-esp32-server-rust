@@ -1,0 +1,17 @@
+[package]
+name = "xiaozhi-transport"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-protocol.workspace = true
+async-trait.workspace = true
+tokio.workspace = true
+futures.workspace = true
+tokio-tungstenite.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+aes.workspace = true
+ctr.workspace = true
+rand.workspace = true

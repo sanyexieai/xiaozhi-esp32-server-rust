@@ -1,0 +1,16 @@
+[package]
+name = "xiaozhi-mqtt-server"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-config.workspace = true
+xiaozhi-auth.workspace = true
+xiaozhi-protocol.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+dashmap.workspace = true
+async-trait.workspace = true
+bytes.workspace = true
+rmqtt = { version = "0.21", features = ["plugin", "tls"] }

@@ -1,0 +1,48 @@
+[package]
+name = "xiaozhi-server"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "xiaozhi-server"
+path = "src/main.rs"
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-protocol.workspace = true
+xiaozhi-config.workspace = true
+xiaozhi-transport.workspace = true
+xiaozhi-auth.workspace = true
+xiaozhi-chat.workspace = true
+xiaozhi-config-provider.workspace = true
+xiaozhi-mcp.workspace = true
+xiaozhi-mqtt-server.workspace = true
+xiaozhi-openclaw.workspace = true
+xiaozhi-hooks.workspace = true
+xiaozhi-history.workspace = true
+xiaozhi-pool.workspace = true
+xiaozhi-vad.workspace = true
+xiaozhi-asr.workspace = true
+xiaozhi-llm.workspace = true
+xiaozhi-tts.workspace = true
+xiaozhi-rag.workspace = true
+xiaozhi-memory.workspace = true
+
+tokio.workspace = true
+axum.workspace = true
+tower-http.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+xiaozhi-logging.workspace = true
+clap.workspace = true
+anyhow.workspace = true
+dashmap.workspace = true
+futures.workspace = true
+futures-util = "0.3"
+tokio-tungstenite.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+rumqttc.workspace = true
+hex.workspace = true

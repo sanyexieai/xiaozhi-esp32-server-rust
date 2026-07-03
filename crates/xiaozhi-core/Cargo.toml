@@ -1,0 +1,12 @@
+[package]
+name = "xiaozhi-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+serde = { workspace = true, optional = true }
+serde_json.workspace = true
+
+[features]
+default = ["serde"]

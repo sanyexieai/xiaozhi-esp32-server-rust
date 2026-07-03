@@ -1,0 +1,14 @@
+[package]
+name = "xiaozhi-history"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-config.workspace = true
+xiaozhi-config-provider.workspace = true
+reqwest.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+uuid.workspace = true

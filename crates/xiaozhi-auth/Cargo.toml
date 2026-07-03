@@ -1,0 +1,19 @@
+[package]
+name = "xiaozhi-auth"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-config.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+hex.workspace = true
+base64.workspace = true
+jsonwebtoken.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+rand.workspace = true
+uuid.workspace = true
+aes.workspace = true

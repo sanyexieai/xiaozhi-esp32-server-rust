@@ -1,0 +1,25 @@
+/target/
+**/*.rs.bk
+*.pdb
+.env
+*.log
+/logs/
+config/models/
+.idea/
+.vscode/
+*.onnx
+*.dll
+*.so
+*.dylib
+# TEN-VAD 预编译库（与 Go 版 lib/ten-vad 对齐，需纳入版本库）
+!lib/ten-vad/**
+!lib/ten-vad/**/*
+
+# Manager 运行时数据
+/data/
+*.db
+
+# 前端（monorepo 同仓，忽略构建产物与依赖）
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/

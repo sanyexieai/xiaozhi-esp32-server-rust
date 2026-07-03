@@ -1,0 +1,19 @@
+[package]
+name = "xiaozhi-logging"
+version.workspace = true
+edition.workspace = true
+description = "小智统一日志：控制台彩色 / 文件滚动 / 数据库持久化"
+
+[dependencies]
+xiaozhi-config.workspace = true
+tracing.workspace = true
+tracing-subscriber = { workspace = true, features = ["env-filter", "fmt", "ansi", "chrono"] }
+tracing-appender.workspace = true
+tokio = { workspace = true, features = ["sync", "rt", "time"] }
+anyhow.workspace = true
+chrono.workspace = true
+serde_json.workspace = true
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[dev-dependencies]
+tempfile = "3"

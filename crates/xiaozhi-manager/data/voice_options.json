@@ -1,0 +1,1254 @@
+{
+  "edge": [
+    {
+      "value": "zh-CN-XiaoxiaoNeural",
+      "label": "晓晓（女声）"
+    },
+    {
+      "value": "zh-CN-YunxiNeural",
+      "label": "云希（男声）"
+    },
+    {
+      "value": "zh-CN-YunyangNeural",
+      "label": "云扬（男声）"
+    },
+    {
+      "value": "zh-CN-XiaoyiNeural",
+      "label": "晓伊（女声）"
+    },
+    {
+      "value": "zh-CN-YunjianNeural",
+      "label": "云健（男声）"
+    },
+    {
+      "value": "zh-CN-YunxiaNeural",
+      "label": "云夏（男声）"
+    },
+    {
+      "value": "zh-CN-YunhaoNeural",
+      "label": "云皓（男声）"
+    },
+    {
+      "value": "zh-CN-XiaohanNeural",
+      "label": "晓涵（女声）"
+    },
+    {
+      "value": "zh-CN-XiaomoNeural",
+      "label": "晓墨（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoxuanNeural",
+      "label": "晓萱（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoruiNeural",
+      "label": "晓睿（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoshuangNeural",
+      "label": "晓双（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoyanNeural",
+      "label": "晓颜（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoyouNeural",
+      "label": "晓悠（女声）"
+    },
+    {
+      "value": "zh-CN-XiaozhenNeural",
+      "label": "晓甄（女声）"
+    },
+    {
+      "value": "zh-CN-YunfengNeural",
+      "label": "云枫（男声）"
+    },
+    {
+      "value": "zh-CN-YunyeNeural",
+      "label": "云野（男声）"
+    },
+    {
+      "value": "zh-CN-YunzeNeural",
+      "label": "云泽（男声）"
+    }
+  ],
+  "microsoft": [
+    {
+      "value": "zh-CN-XiaoxiaoNeural",
+      "label": "晓晓（女声）"
+    },
+    {
+      "value": "zh-CN-YunxiNeural",
+      "label": "云希（男声）"
+    },
+    {
+      "value": "zh-CN-YunyangNeural",
+      "label": "云扬（男声）"
+    },
+    {
+      "value": "zh-CN-XiaoyiNeural",
+      "label": "晓伊（女声）"
+    },
+    {
+      "value": "zh-CN-YunjianNeural",
+      "label": "云健（男声）"
+    },
+    {
+      "value": "zh-CN-YunxiaNeural",
+      "label": "云夏（男声）"
+    },
+    {
+      "value": "zh-CN-YunhaoNeural",
+      "label": "云皓（男声）"
+    },
+    {
+      "value": "zh-CN-XiaohanNeural",
+      "label": "晓涵（女声）"
+    },
+    {
+      "value": "zh-CN-XiaomoNeural",
+      "label": "晓墨（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoxuanNeural",
+      "label": "晓萱（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoruiNeural",
+      "label": "晓睿（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoshuangNeural",
+      "label": "晓双（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoyanNeural",
+      "label": "晓颜（女声）"
+    },
+    {
+      "value": "zh-CN-XiaoyouNeural",
+      "label": "晓悠（女声）"
+    },
+    {
+      "value": "zh-CN-XiaozhenNeural",
+      "label": "晓甄（女声）"
+    },
+    {
+      "value": "zh-CN-YunfengNeural",
+      "label": "云枫（男声）"
+    },
+    {
+      "value": "zh-CN-YunyeNeural",
+      "label": "云野（男声）"
+    },
+    {
+      "value": "zh-CN-YunzeNeural",
+      "label": "云泽（男声）"
+    }
+  ],
+  "doubao": [
+    {
+      "value": "BV700_V2_streaming",
+      "label": "灿灿 2.0"
+    },
+    {
+      "value": "BV705_streaming",
+      "label": "炀炀"
+    },
+    {
+      "value": "BV701_V2_streaming",
+      "label": "擎苍 2.0"
+    },
+    {
+      "value": "BV001_V2_streaming",
+      "label": "通用女声 2.0"
+    },
+    {
+      "value": "BV700_streaming",
+      "label": "灿灿"
+    },
+    {
+      "value": "BV406_V2_streaming",
+      "label": "超自然音色-梓梓2.0"
+    },
+    {
+      "value": "BV406_streaming",
+      "label": "超自然音色-梓梓"
+    },
+    {
+      "value": "BV407_V2_streaming",
+      "label": "超自然音色-燃燃2.0"
+    },
+    {
+      "value": "BV407_streaming",
+      "label": "超自然音色-燃燃"
+    },
+    {
+      "value": "BV001_streaming",
+      "label": "通用女声"
+    },
+    {
+      "value": "BV002_streaming",
+      "label": "通用男声"
+    },
+    {
+      "value": "BV701_streaming",
+      "label": "擎苍"
+    },
+    {
+      "value": "BV119_streaming",
+      "label": "通用赘婿"
+    },
+    {
+      "value": "BV102_streaming",
+      "label": "儒雅青年"
+    },
+    {
+      "value": "BV113_streaming",
+      "label": "甜宠少御"
+    },
+    {
+      "value": "BV115_streaming",
+      "label": "古风少御"
+    },
+    {
+      "value": "BV007_streaming",
+      "label": "亲切女声"
+    },
+    {
+      "value": "BV056_streaming",
+      "label": "阳光男声"
+    },
+    {
+      "value": "BV005_streaming",
+      "label": "活泼女声"
+    },
+    {
+      "value": "BV051_streaming",
+      "label": "奶气萌娃"
+    },
+    {
+      "value": "BV034_streaming",
+      "label": "知性姐姐-双语"
+    },
+    {
+      "value": "BV033_streaming",
+      "label": "温柔小哥"
+    },
+    {
+      "value": "BV021_streaming",
+      "label": "东北老铁"
+    },
+    {
+      "value": "BV019_streaming",
+      "label": "重庆小伙"
+    },
+    {
+      "value": "BV213_streaming",
+      "label": "广西表哥"
+    },
+    {
+      "value": "BV503_streaming",
+      "label": "活力女声-Ariana"
+    },
+    {
+      "value": "BV504_streaming",
+      "label": "活力男声-Jackson"
+    },
+    {
+      "value": "BV522_streaming",
+      "label": "气质女生"
+    },
+    {
+      "value": "BV524_streaming",
+      "label": "日语男声"
+    },
+    {
+      "value": "BV104_streaming",
+      "label": "温柔淑女"
+    },
+    {
+      "value": "BV004_streaming",
+      "label": "开朗青年"
+    },
+    {
+      "value": "BV009_streaming",
+      "label": "知性女声"
+    },
+    {
+      "value": "BV008_streaming",
+      "label": "亲切男声"
+    },
+    {
+      "value": "BV064_streaming",
+      "label": "小萝莉"
+    },
+    {
+      "value": "BV437_streaming",
+      "label": "解说小帅-多情感"
+    },
+    {
+      "value": "BV511_streaming",
+      "label": "慵懒女声-Ava"
+    },
+    {
+      "value": "BV040_streaming",
+      "label": "亲切女声-Anna"
+    },
+    {
+      "value": "BV138_streaming",
+      "label": "情感女声-Lawrence"
+    },
+    {
+      "value": "BV704_streaming",
+      "label": "方言灿灿"
+    },
+    {
+      "value": "BV702_streaming",
+      "label": "Stefan"
+    },
+    {
+      "value": "BV421_streaming",
+      "label": "天才少女"
+    }
+  ],
+  "doubao_ws": [
+    {
+      "value": "zh_female_cancan_mars_bigtts",
+      "label": "灿灿 / Shiny（女声）"
+    },
+    {
+      "value": "zh_female_vv_uranus_bigtts",
+      "label": "vivi 2.0（女声）"
+    },
+    {
+      "value": "zh_female_vv_jupiter_bigtts",
+      "label": "vivi O版（女声）"
+    },
+    {
+      "value": "zh_female_xiaohe_jupiter_bigtts",
+      "label": "小何 O版（女声）"
+    },
+    {
+      "value": "saturn_zh_female_cancan_tob",
+      "label": "知性灿灿（女声）"
+    },
+    {
+      "value": "saturn_zh_female_keainvsheng_tob",
+      "label": "可爱女生（女声）"
+    },
+    {
+      "value": "saturn_zh_female_tiaopigongzhu_tob",
+      "label": "调皮公主（女声）"
+    },
+    {
+      "value": "zh_female_xiaohe_uranus_bigtts",
+      "label": "小何（女声）"
+    },
+    {
+      "value": "zh_female_tianmeitaozi_mars_bigtts",
+      "label": "甜美桃子（女声）"
+    },
+    {
+      "value": "zh_female_wanwanxiaohe_moon_bigtts",
+      "label": "湾湾小何（女声）"
+    },
+    {
+      "value": "zh_female_qinqienvsheng_moon_bigtts",
+      "label": "亲切女声（女声）"
+    },
+    {
+      "value": "zh_female_vv_mars_bigtts",
+      "label": "Vivi（女声）"
+    },
+    {
+      "value": "zh_female_tianmeixiaoyuan_moon_bigtts",
+      "label": "甜美小源（女声）"
+    },
+    {
+      "value": "zh_female_qingchezizi_moon_bigtts",
+      "label": "清澈梓梓（女声）"
+    },
+    {
+      "value": "zh_female_kailangjiejie_moon_bigtts",
+      "label": "开朗姐姐（女声）"
+    },
+    {
+      "value": "zh_female_tianmeiyueyue_moon_bigtts",
+      "label": "甜美悦悦（女声）"
+    },
+    {
+      "value": "zh_female_xinlingjitang_moon_bigtts",
+      "label": "心灵鸡汤（女声）"
+    },
+    {
+      "value": "zh_female_zhixingnvsheng_mars_bigtts",
+      "label": "知性女声（女声）"
+    },
+    {
+      "value": "zh_female_wenroushunv_mars_bigtts",
+      "label": "温柔淑女（女声）"
+    },
+    {
+      "value": "zh_female_wenrouxiaoya_moon_bigtts",
+      "label": "温柔小雅（女声）"
+    },
+    {
+      "value": "zh_female_linjianvhai_moon_bigtts",
+      "label": "邻家女孩（女声）"
+    },
+    {
+      "value": "zh_female_shuangkuaisisi_moon_bigtts",
+      "label": "爽快思思/Skye（女声）"
+    },
+    {
+      "value": "zh_female_gaolengyujie_moon_bigtts",
+      "label": "高冷御姐（女声）"
+    },
+    {
+      "value": "zh_female_meilinvyou_moon_bigtts",
+      "label": "魅力女友（女声）"
+    },
+    {
+      "value": "zh_female_sajiaonvyou_moon_bigtts",
+      "label": "柔美女友（撒娇）（女声）"
+    },
+    {
+      "value": "zh_female_yuanqinvyou_moon_bigtts",
+      "label": "撒娇学妹（女声）"
+    },
+    {
+      "value": "ICL_zh_female_wenrounvshen_239eff5e8ffa_tob",
+      "label": "温柔女神（女声）"
+    },
+    {
+      "value": "ICL_zh_female_chunzhenshaonv_e588402fb8ad_tob",
+      "label": "纯真少女（女声）"
+    },
+    {
+      "value": "ICL_zh_female_jinglingxiangdao_1beb294a9e3e_tob",
+      "label": "精灵向导（女声）"
+    },
+    {
+      "value": "ICL_zh_female_yilin_tob",
+      "label": "贴心妹妹（女声）"
+    },
+    {
+      "value": "ICL_zh_female_chengshujiejie_tob",
+      "label": "成熟姐姐（女声）"
+    },
+    {
+      "value": "ICL_zh_female_bingjiaojiejie_tob",
+      "label": "病娇姐姐（女声）"
+    },
+    {
+      "value": "ICL_zh_female_wumeiyujie_tob",
+      "label": "妩媚御姐（女声）"
+    },
+    {
+      "value": "ICL_zh_female_aojiaonvyou_tob",
+      "label": "傲娇女友（女声）"
+    },
+    {
+      "value": "ICL_zh_female_tiexinnvyou_tob",
+      "label": "贴心女友（女声）"
+    },
+    {
+      "value": "ICL_zh_female_xingganyujie_tob",
+      "label": "性感御姐（女声）"
+    },
+    {
+      "value": "ICL_zh_female_lixingyuanzi_cs_tob",
+      "label": "理性圆子（客服女声）"
+    },
+    {
+      "value": "ICL_zh_female_wuxi_tob",
+      "label": "元气甜妹（女声）"
+    },
+    {
+      "value": "ICL_zh_female_zhixingwenwan_tob",
+      "label": "知性温婉（女声）"
+    },
+    {
+      "value": "saturn_zh_male_shuanglangshaonian_tob",
+      "label": "爽朗少年（男声）"
+    },
+    {
+      "value": "saturn_zh_male_tiancaitongzhuo_tob",
+      "label": "天才同桌（男声）"
+    },
+    {
+      "value": "zh_male_yunzhou_jupiter_bigtts",
+      "label": "云舟 O版（男声）"
+    },
+    {
+      "value": "zh_male_xiaotian_jupiter_bigtts",
+      "label": "小天 O版（男声）"
+    },
+    {
+      "value": "zh_male_m191_uranus_bigtts",
+      "label": "云舟（男声）"
+    },
+    {
+      "value": "zh_male_taocheng_uranus_bigtts",
+      "label": "小天（男声）"
+    },
+    {
+      "value": "en_male_tim_uranus_bigtts",
+      "label": "Tim（英文男声）"
+    },
+    {
+      "value": "zh_male_yangguangqingnian_moon_bigtts",
+      "label": "阳光青年（男声）"
+    },
+    {
+      "value": "zh_male_qingshuangnanda_mars_bigtts",
+      "label": "清爽男大（男声）"
+    },
+    {
+      "value": "zh_male_wenrouxiaoge_mars_bigtts",
+      "label": "温柔小哥（男声）"
+    },
+    {
+      "value": "zh_male_qingcang_mars_bigtts",
+      "label": "擎苍（男声）"
+    },
+    {
+      "value": "zh_male_ruyaqingnian_mars_bigtts",
+      "label": "儒雅青年（男声）"
+    },
+    {
+      "value": "zh_male_jieshuoxiaoming_moon_bigtts",
+      "label": "解说小明（男声）"
+    },
+    {
+      "value": "zh_male_linjiananhai_moon_bigtts",
+      "label": "邻家男孩（男声）"
+    },
+    {
+      "value": "zh_male_yuanboxiaoshu_moon_bigtts",
+      "label": "渊博小叔（男声）"
+    },
+    {
+      "value": "zh_male_wennuanahu_moon_bigtts",
+      "label": "温暖阿虎/Alvin（男声）"
+    },
+    {
+      "value": "zh_male_shaonianzixin_moon_bigtts",
+      "label": "少年梓辛/Brayan（男声）"
+    },
+    {
+      "value": "zh_male_beijingxiaoye_moon_bigtts",
+      "label": "北京小爷（男声）"
+    },
+    {
+      "value": "zh_male_jingqiangkanye_moon_bigtts",
+      "label": "京腔侃爷/Harmony（男声）"
+    },
+    {
+      "value": "zh_male_guozhoudege_moon_bigtts",
+      "label": "广州德哥（男声）"
+    },
+    {
+      "value": "zh_male_haoyuxiaoge_moon_bigtts",
+      "label": "浩宇小哥（男声）"
+    },
+    {
+      "value": "zh_male_shenyeboke_moon_bigtts",
+      "label": "深夜播客（男声）"
+    },
+    {
+      "value": "zh_male_aojiaobazong_moon_bigtts",
+      "label": "傲娇霸总（男声）"
+    },
+    {
+      "value": "zh_male_dongfanghaoran_moon_bigtts",
+      "label": "东方浩然（男声）"
+    },
+    {
+      "value": "zh_male_M100_conversation_wvae_bigtts",
+      "label": "悠悠君子/Lucas（男声）"
+    },
+    {
+      "value": "zh_male_xudong_conversation_wvae_bigtts",
+      "label": "快乐小东/Daníel（男声）"
+    },
+    {
+      "value": "zh_male_qingyiyuxuan_mars_bigtts",
+      "label": "阳光阿辰（男声）"
+    },
+    {
+      "value": "en_male_jason_conversation_wvae_bigtts",
+      "label": "开朗学长（男声）"
+    },
+    {
+      "value": "ICL_zh_male_lengkugege_v1_tob",
+      "label": "冷酷哥哥（男声）"
+    },
+    {
+      "value": "ICL_zh_male_shenmi_v1_tob",
+      "label": "机灵小伙（男声）"
+    },
+    {
+      "value": "ICL_zh_male_BV705_streaming_cs_tob",
+      "label": "炀炀（男声）"
+    },
+    {
+      "value": "ICL_zh_male_menyoupingxiaoge_ffed9fc2fee7_tob",
+      "label": "闷油瓶小哥（男声）"
+    },
+    {
+      "value": "ICL_zh_male_anrenqinzhu_cd62e63dcdab_tob",
+      "label": "黯刃秦主（男声）"
+    },
+    {
+      "value": "ICL_zh_male_guaogongzi_v1_tob",
+      "label": "孤傲公子（男声）"
+    },
+    {
+      "value": "ICL_zh_male_bingruogongzi_tob",
+      "label": "病弱公子（男声）"
+    },
+    {
+      "value": "ICL_zh_male_bingjiaodidi_tob",
+      "label": "病娇弟弟（男声）"
+    },
+    {
+      "value": "ICL_zh_male_aomanshaoye_tob",
+      "label": "傲慢少爷（男声）"
+    },
+    {
+      "value": "ICL_zh_male_chunzhenxuedi_tob",
+      "label": "纯真学弟（男声）"
+    },
+    {
+      "value": "ICL_zh_male_yourougongzi_tob",
+      "label": "优柔公子（男声）"
+    },
+    {
+      "value": "ICL_zh_male_tiexinnanyou_tob",
+      "label": "贴心男友（男声）"
+    },
+    {
+      "value": "ICL_zh_male_shaonianjiangjun_tob",
+      "label": "少年将军（男声）"
+    },
+    {
+      "value": "ICL_zh_male_bingjiaogege_tob",
+      "label": "病娇哥哥（男声）"
+    },
+    {
+      "value": "ICL_zh_male_xuebanantongzhuo_tob",
+      "label": "学霸男同桌（男声）"
+    },
+    {
+      "value": "ICL_zh_male_youmoshushu_tob",
+      "label": "幽默叔叔（男声）"
+    },
+    {
+      "value": "ICL_zh_male_wenrounantongzhuo_tob",
+      "label": "温柔男同桌（男声）"
+    },
+    {
+      "value": "ICL_zh_male_youmodaye_tob",
+      "label": "幽默大爷（男声）"
+    },
+    {
+      "value": "ICL_zh_male_shenmifashi_tob",
+      "label": "神秘法师（男声）"
+    },
+    {
+      "value": "ICL_zh_male_lengjunshangsi_tob",
+      "label": "冷峻上司（男声）"
+    },
+    {
+      "value": "ICL_en_male_michael_tob",
+      "label": "Michael（美式英语男声）"
+    },
+    {
+      "value": "zh_male_lubanqihao_mars_bigtts",
+      "label": "鲁班七号（男声）"
+    },
+    {
+      "value": "zh_female_yangmi_mars_bigtts",
+      "label": "林潇（女声）"
+    },
+    {
+      "value": "zh_female_linzhiling_mars_bigtts",
+      "label": "玲玲姐姐（女声）"
+    },
+    {
+      "value": "zh_female_jiyejizi2_mars_bigtts",
+      "label": "春日部姐姐（女声）"
+    },
+    {
+      "value": "zh_male_tangseng_mars_bigtts",
+      "label": "唐僧（男声）"
+    },
+    {
+      "value": "zh_male_zhubajie_mars_bigtts",
+      "label": "猪八戒（男声）"
+    },
+    {
+      "value": "zh_female_naying_mars_bigtts",
+      "label": "直率英子（女声）"
+    },
+    {
+      "value": "zh_female_leidian_mars_bigtts",
+      "label": "女雷神（女声）"
+    },
+    {
+      "value": "zh_male_sunwukong_mars_bigtts",
+      "label": "猴哥（男声）"
+    },
+    {
+      "value": "zh_male_xionger_mars_bigtts",
+      "label": "熊二（男声）"
+    },
+    {
+      "value": "zh_female_peiqi_mars_bigtts",
+      "label": "佩奇猪（女声）"
+    },
+    {
+      "value": "zh_female_yingtaowanzi_mars_bigtts",
+      "label": "樱桃丸子（女声）"
+    },
+    {
+      "value": "zh_male_silang_mars_bigtts",
+      "label": "四郎（男声）"
+    }
+  ],
+  "minimax": [
+    {
+      "value": "male-qn-qingse",
+      "label": "青涩青年音色"
+    },
+    {
+      "value": "male-qn-jingying",
+      "label": "精英青年音色"
+    },
+    {
+      "value": "male-qn-badao",
+      "label": "霸道青年音色"
+    },
+    {
+      "value": "male-qn-daxuesheng",
+      "label": "青年大学生音色"
+    },
+    {
+      "value": "female-shaonv",
+      "label": "少女音色"
+    },
+    {
+      "value": "female-yujie",
+      "label": "御姐音色"
+    },
+    {
+      "value": "female-chengshu",
+      "label": "成熟女性音色"
+    },
+    {
+      "value": "female-tianmei",
+      "label": "甜美女性音色"
+    },
+    {
+      "value": "male-qn-qingse-jingpin",
+      "label": "青涩青年音色-beta"
+    },
+    {
+      "value": "male-qn-jingying-jingpin",
+      "label": "精英青年音色-beta"
+    },
+    {
+      "value": "male-qn-badao-jingpin",
+      "label": "霸道青年音色-beta"
+    },
+    {
+      "value": "male-qn-daxuesheng-jingpin",
+      "label": "青年大学生音色-beta"
+    },
+    {
+      "value": "female-shaonv-jingpin",
+      "label": "少女音色-beta"
+    },
+    {
+      "value": "female-yujie-jingpin",
+      "label": "御姐音色-beta"
+    },
+    {
+      "value": "female-chengshu-jingpin",
+      "label": "成熟女性音色-beta"
+    },
+    {
+      "value": "female-tianmei-jingpin",
+      "label": "甜美女性音色-beta"
+    },
+    {
+      "value": "clever_boy",
+      "label": "聪明男童"
+    },
+    {
+      "value": "cute_boy",
+      "label": "可爱男童"
+    },
+    {
+      "value": "lovely_girl",
+      "label": "萌萌女童"
+    },
+    {
+      "value": "cartoon_pig",
+      "label": "卡通猪小琪"
+    },
+    {
+      "value": "bingjiao_didi",
+      "label": "病娇弟弟"
+    },
+    {
+      "value": "junlang_nanyou",
+      "label": "俊朗男友"
+    },
+    {
+      "value": "chunzhen_xuedi",
+      "label": "纯真学弟"
+    },
+    {
+      "value": "lengdan_xiongzhang",
+      "label": "冷淡学长"
+    },
+    {
+      "value": "badao_shaoye",
+      "label": "霸道少爷"
+    },
+    {
+      "value": "tianxin_xiaoling",
+      "label": "甜心小玲"
+    },
+    {
+      "value": "qiaopi_mengmei",
+      "label": "俏皮萌妹"
+    },
+    {
+      "value": "wumei_yujie",
+      "label": "妩媚御姐"
+    },
+    {
+      "value": "diadia_xuemei",
+      "label": "嗲嗲学妹"
+    },
+    {
+      "value": "danya_xuejie",
+      "label": "淡雅学姐"
+    },
+    {
+      "value": "Chinese (Mandarin)_Reliable_Executive",
+      "label": "沉稳高管"
+    },
+    {
+      "value": "Chinese (Mandarin)_News_Anchor",
+      "label": "新闻女声"
+    },
+    {
+      "value": "Chinese (Mandarin)_Mature_Woman",
+      "label": "傲娇御姐"
+    },
+    {
+      "value": "Chinese (Mandarin)_Unrestrained_Young_Man",
+      "label": "不羁青年"
+    },
+    {
+      "value": "Arrogant_Miss",
+      "label": "嚣张小姐"
+    },
+    {
+      "value": "Robot_Armor",
+      "label": "机械战甲"
+    },
+    {
+      "value": "Chinese (Mandarin)_Kind-hearted_Antie",
+      "label": "热心大婶"
+    },
+    {
+      "value": "Chinese (Mandarin)_HK_Flight_Attendant",
+      "label": "港普空姐"
+    },
+    {
+      "value": "Chinese (Mandarin)_Humorous_Elder",
+      "label": "搞笑大爷"
+    },
+    {
+      "value": "Chinese (Mandarin)_Gentleman",
+      "label": "温润男声"
+    },
+    {
+      "value": "Chinese (Mandarin)_Warm_Bestie",
+      "label": "温暖闺蜜"
+    },
+    {
+      "value": "Chinese (Mandarin)_Male_Announcer",
+      "label": "播报男声"
+    },
+    {
+      "value": "Chinese (Mandarin)_Sweet_Lady",
+      "label": "甜美女声"
+    },
+    {
+      "value": "Chinese (Mandarin)_Southern_Young_Man",
+      "label": "南方小哥"
+    },
+    {
+      "value": "Chinese (Mandarin)_Wise_Women",
+      "label": "阅历姐姐"
+    },
+    {
+      "value": "Chinese (Mandarin)_Gentle_Youth",
+      "label": "温润青年"
+    },
+    {
+      "value": "Chinese (Mandarin)_Warm_Girl",
+      "label": "温暖少女"
+    },
+    {
+      "value": "Chinese (Mandarin)_Kind-hearted_Elder",
+      "label": "花甲奶奶"
+    },
+    {
+      "value": "Chinese (Mandarin)_Cute_Spirit",
+      "label": "憨憨萌兽"
+    },
+    {
+      "value": "Chinese (Mandarin)_Radio_Host",
+      "label": "电台男主播"
+    },
+    {
+      "value": "Chinese (Mandarin)_Lyrical_Voice",
+      "label": "抒情男声"
+    },
+    {
+      "value": "Chinese (Mandarin)_Straightforward_Boy",
+      "label": "率真弟弟"
+    },
+    {
+      "value": "Chinese (Mandarin)_Sincere_Adult",
+      "label": "真诚青年"
+    },
+    {
+      "value": "Chinese (Mandarin)_Gentle_Senior",
+      "label": "温柔学姐"
+    },
+    {
+      "value": "Chinese (Mandarin)_Stubborn_Friend",
+      "label": "嘴硬竹马"
+    },
+    {
+      "value": "Chinese (Mandarin)_Crisp_Girl",
+      "label": "清脆少女"
+    },
+    {
+      "value": "Chinese (Mandarin)_Pure-hearted_Boy",
+      "label": "清澈邻家弟弟"
+    },
+    {
+      "value": "Chinese (Mandarin)_Soft_Girl",
+      "label": "柔和少女"
+    },
+    {
+      "value": "Cantonese_ProfessionalHost（F)",
+      "label": "专业女主持"
+    },
+    {
+      "value": "Cantonese_GentleLady",
+      "label": "温柔女声"
+    },
+    {
+      "value": "Cantonese_ProfessionalHost（M)",
+      "label": "专业男主持"
+    },
+    {
+      "value": "Cantonese_PlayfulMan",
+      "label": "活泼男声"
+    },
+    {
+      "value": "Cantonese_CuteGirl",
+      "label": "可爱女孩"
+    },
+    {
+      "value": "Cantonese_KindWoman",
+      "label": "善良女声"
+    },
+    {
+      "value": "Santa_Claus",
+      "label": "Santa Claus"
+    },
+    {
+      "value": "Grinch",
+      "label": "Grinch"
+    },
+    {
+      "value": "Rudolph",
+      "label": "Rudolph"
+    },
+    {
+      "value": "Arnold",
+      "label": "Arnold"
+    },
+    {
+      "value": "Charming_Santa",
+      "label": "Charming Santa"
+    },
+    {
+      "value": "Charming_Lady",
+      "label": "Charming Lady"
+    },
+    {
+      "value": "Sweet_Girl",
+      "label": "Sweet Girl"
+    },
+    {
+      "value": "Cute_Elf",
+      "label": "Cute Elf"
+    },
+    {
+      "value": "Attractive_Girl",
+      "label": "Attractive Girl"
+    },
+    {
+      "value": "Serene_Woman",
+      "label": "Serene Woman"
+    },
+    {
+      "value": "English_Trustworthy_Man",
+      "label": "Trustworthy Man"
+    },
+    {
+      "value": "English_Graceful_Lady",
+      "label": "Graceful Lady"
+    },
+    {
+      "value": "English_Aussie_Bloke",
+      "label": "Aussie Bloke"
+    },
+    {
+      "value": "English_Whispering_girl",
+      "label": "Whispering girl"
+    },
+    {
+      "value": "English_Diligent_Man",
+      "label": "Diligent Man"
+    },
+    {
+      "value": "English_Gentle-voiced_man",
+      "label": "Gentle-voiced man"
+    }
+  ],
+  "aliyun_qwen": [
+    {
+      "value": "Cherry",
+      "label": "芊悦"
+    },
+    {
+      "value": "Serena",
+      "label": "苏瑶"
+    },
+    {
+      "value": "Ethan",
+      "label": "晨煦"
+    },
+    {
+      "value": "Chelsie",
+      "label": "千雪"
+    },
+    {
+      "value": "Momo",
+      "label": "茉兔"
+    },
+    {
+      "value": "Vivian",
+      "label": "十三"
+    },
+    {
+      "value": "Moon",
+      "label": "月白"
+    },
+    {
+      "value": "Maia",
+      "label": "四月"
+    },
+    {
+      "value": "Kai",
+      "label": "凯"
+    },
+    {
+      "value": "Nofish",
+      "label": "不吃鱼"
+    },
+    {
+      "value": "Bella",
+      "label": "萌宝"
+    },
+    {
+      "value": "Jennifer",
+      "label": "詹妮弗"
+    },
+    {
+      "value": "Ryan",
+      "label": "甜茶"
+    }
+  ],
+  "xunfei": [
+    {
+      "value": "xiaoyan",
+      "label": "小燕（女声，默认推荐）"
+    },
+    {
+      "value": "xiaofeng",
+      "label": "晓峰（男声）"
+    },
+    {
+      "value": "yezi",
+      "label": "小露（女声）"
+    },
+    {
+      "value": "yifei",
+      "label": "一菲（女声）"
+    },
+    {
+      "value": "yiping",
+      "label": "一萍（女声）"
+    },
+    {
+      "value": "qige",
+      "label": "七哥（男声）"
+    },
+    {
+      "value": "chaoge",
+      "label": "超哥（男声）"
+    },
+    {
+      "value": "pengfei",
+      "label": "小鹏（男声）"
+    },
+    {
+      "value": "xiaoxin",
+      "label": "萌小新（童声）"
+    },
+    {
+      "value": "john",
+      "label": "John（英文男声）"
+    },
+    {
+      "value": "catherine",
+      "label": "Catherine（英文女声）"
+    }
+  ],
+  "xunfei_super_tts": [
+    {
+      "value": "x6_lingxiaoxue_pro",
+      "label": "灵小雪（x6）"
+    },
+    {
+      "value": "x6_lingfeiyi_pro",
+      "label": "灵飞逸（x6）"
+    },
+    {
+      "value": "x6_lingxiaoli_pro",
+      "label": "灵小丽（x6）"
+    },
+    {
+      "value": "x6_lingxiaoyue_pro",
+      "label": "灵小玥（x6）"
+    },
+    {
+      "value": "x6_lingxiaoxuan_pro",
+      "label": "灵小萱（x6）"
+    },
+    {
+      "value": "x6_lingyuyan_pro",
+      "label": "灵语嫣（x6）"
+    },
+    {
+      "value": "x6_lingyouyou_pro",
+      "label": "灵悠悠（x6）"
+    },
+    {
+      "value": "x6_feizheChat_pro",
+      "label": "飞哲 Chat（x6）"
+    },
+    {
+      "value": "x6_xiaoqiChat_pro",
+      "label": "小琪 Chat（x6）"
+    },
+    {
+      "value": "x5_lingxiaotang_flow",
+      "label": "灵小棠（x5）"
+    },
+    {
+      "value": "x5_lingyuzhao_flow",
+      "label": "灵语昭（x5）"
+    },
+    {
+      "value": "x4_zijin_oral",
+      "label": "紫瑾（x4，口语化）"
+    },
+    {
+      "value": "x4_ziyang_oral",
+      "label": "紫阳（x4，口语化）"
+    }
+  ],
+  "zhipu": [
+    {
+      "value": "tongtong",
+      "label": "彤彤（默认音色）"
+    },
+    {
+      "value": "chuichui",
+      "label": "锤锤"
+    },
+    {
+      "value": "xiaochen",
+      "label": "小陈"
+    },
+    {
+      "value": "jam",
+      "label": "动动动物圈jam音色"
+    },
+    {
+      "value": "kazi",
+      "label": "动动动物圈kazi音色"
+    },
+    {
+      "value": "douji",
+      "label": "动动动物圈douji音色"
+    },
+    {
+      "value": "luodo",
+      "label": "动动动物圈luodo音色"
+    }
+  ],
+  "openai": [
+    {
+      "value": "alloy",
+      "label": "Alloy"
+    },
+    {
+      "value": "echo",
+      "label": "Echo"
+    },
+    {
+      "value": "fable",
+      "label": "Fable"
+    },
+    {
+      "value": "onyx",
+      "label": "Onyx"
+    },
+    {
+      "value": "nova",
+      "label": "Nova"
+    },
+    {
+      "value": "shimmer",
+      "label": "Shimmer"
+    }
+  ]
+}

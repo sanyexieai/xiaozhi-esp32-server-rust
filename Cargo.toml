@@ -1,0 +1,110 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/xiaozhi-core",
+    "crates/xiaozhi-protocol",
+    "crates/xiaozhi-config",
+    "crates/xiaozhi-transport",
+    "crates/xiaozhi-vad",
+    "crates/xiaozhi-asr",
+    "crates/xiaozhi-llm",
+    "crates/xiaozhi-tts",
+    "crates/xiaozhi-memory",
+    "crates/xiaozhi-mcp",
+    "crates/xiaozhi-rag",
+    "crates/xiaozhi-speaker",
+    "crates/xiaozhi-openclaw",
+    "crates/xiaozhi-pool",
+    "crates/xiaozhi-auth",
+    "crates/xiaozhi-config-provider",
+    "crates/xiaozhi-chat",
+    "crates/xiaozhi-mqtt-server",
+    "crates/xiaozhi-eventbus",
+    "crates/xiaozhi-hooks",
+    "crates/xiaozhi-music",
+    "crates/xiaozhi-history",
+    "crates/xiaozhi-logging",
+    "crates/xiaozhi-manager",
+    "crates/xiaozhi-server",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["xiaozhi-esp32-server-rust"]
+license = "MIT"
+
+[workspace.dependencies]
+# Internal crates
+xiaozhi-core = { path = "crates/xiaozhi-core" }
+xiaozhi-protocol = { path = "crates/xiaozhi-protocol" }
+xiaozhi-config = { path = "crates/xiaozhi-config" }
+xiaozhi-transport = { path = "crates/xiaozhi-transport" }
+xiaozhi-vad = { path = "crates/xiaozhi-vad" }
+xiaozhi-asr = { path = "crates/xiaozhi-asr" }
+xiaozhi-llm = { path = "crates/xiaozhi-llm" }
+xiaozhi-tts = { path = "crates/xiaozhi-tts" }
+xiaozhi-memory = { path = "crates/xiaozhi-memory" }
+xiaozhi-mcp = { path = "crates/xiaozhi-mcp" }
+xiaozhi-rag = { path = "crates/xiaozhi-rag" }
+xiaozhi-speaker = { path = "crates/xiaozhi-speaker" }
+xiaozhi-openclaw = { path = "crates/xiaozhi-openclaw" }
+xiaozhi-pool = { path = "crates/xiaozhi-pool" }
+xiaozhi-auth = { path = "crates/xiaozhi-auth" }
+xiaozhi-config-provider = { path = "crates/xiaozhi-config-provider" }
+xiaozhi-chat = { path = "crates/xiaozhi-chat" }
+xiaozhi-mqtt-server = { path = "crates/xiaozhi-mqtt-server" }
+xiaozhi-eventbus = { path = "crates/xiaozhi-eventbus" }
+xiaozhi-hooks = { path = "crates/xiaozhi-hooks" }
+xiaozhi-music = { path = "crates/xiaozhi-music" }
+xiaozhi-history = { path = "crates/xiaozhi-history" }
+xiaozhi-logging = { path = "crates/xiaozhi-logging" }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+futures = "0.3"
+async-trait = "0.1"
+
+# Web / Network
+axum = { version = "0.8", features = ["ws", "multipart"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
+tokio-tungstenite = { version = "0.26", features = ["native-tls"] }
+reqwest = { version = "0.12", default-features = true, features = ["json", "stream", "multipart"] }
+rumqttc = "0.24"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+
+# Crypto / Auth
+jsonwebtoken = "9"
+hmac = "0.12"
+sha2 = "0.10"
+aes = "0.8"
+ctr = "0.9"
+rand = "0.8"
+hex = "0.4"
+base64 = "0.22"
+
+# Audio
+opus = "0.3"
+audiopus_sys = { version = "0.2", features = ["static"] }
+
+# Utilities
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "ansi", "chrono"] }
+tracing-appender = "0.2"
+dashmap = "6"
+parking_lot = "0.12"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive"] }
+bytes = "1"
+regex = "1"
+
+# Redis
+redis = { version = "0.27", features = ["tokio-comp", "connection-manager"] }

@@ -1,0 +1,1596 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Light Preview</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-strong: #ffffff;
+      --surface-soft: #f9fafc;
+      --text: #1d1d1f;
+      --text-muted: #6e6e73;
+      --line: #e5e5ea;
+      --line-strong: #d7dbe2;
+      --primary: #007aff;
+      --primary-soft: rgba(0, 122, 255, 0.1);
+      --success: #34c759;
+      --warning: #ff9f0a;
+      --danger: #ff3b30;
+      --shadow-lg: 0 24px 56px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 14px 32px rgba(15, 23, 42, 0.06);
+      --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.05);
+      --radius-xl: 24px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --transition-fast: 180ms ease;
+      --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: var(--font-stack);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(0, 122, 255, 0.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(52, 199, 89, 0.08), transparent 22%),
+        linear-gradient(180deg, #fbfcfe 0%, var(--bg) 100%);
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .preview-shell {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .surface {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 24px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1.2fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+      padding: 16px 20px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      background: linear-gradient(180deg, #2e90ff 0%, #007aff 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 18px rgba(0, 122, 255, 0.26);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      font-size: 12px;
+      line-height: 1;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .eyebrow.primary {
+      color: var(--primary);
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .brand-subtitle {
+      margin: 3px 0 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .topnav {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 999px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .topnav-tab {
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .topnav-tab:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .topnav-tab.is-active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: inset 0 0 0 1px rgba(0, 122, 255, 0.08);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      min-width: 240px;
+      height: 46px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-pill svg {
+      flex: none;
+      color: var(--text-muted);
+    }
+
+    .search-pill input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .search-pill input::placeholder {
+      color: #9a9aa2;
+    }
+
+    .icon-button,
+    .avatar-button {
+      height: 46px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .icon-button {
+      width: 46px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .avatar-button {
+      padding: 0 8px 0 6px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .avatar-chip {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #f0f7ff 0%, #dcebff 100%);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .icon-button:hover,
+    .avatar-button:hover,
+    .search-pill:focus-within {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--line-strong);
+    }
+
+    .page-body {
+      display: grid;
+      gap: 24px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
+      gap: 22px;
+      padding: 28px;
+      border-radius: 32px;
+    }
+
+    .hero-copy h1 {
+      margin: 0;
+      font-size: 44px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-copy p {
+      margin: 16px 0 0;
+      max-width: 660px;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .hero-meta {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(52, 199, 89, 0.1);
+      color: #1d6f35;
+      font-weight: 600;
+    }
+
+    .status-pill .dot,
+    .status-row .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      background: currentColor;
+      box-shadow: 0 0 0 5px rgba(52, 199, 89, 0.12);
+    }
+
+    .hero-preview {
+      display: grid;
+      gap: 14px;
+    }
+
+    .preview-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(247, 249, 252, 0.88) 100%);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+      padding: 18px;
+    }
+
+    .preview-card header,
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .preview-card h2,
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .subtext {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .preview-stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-metric {
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+    }
+
+    .mini-metric strong,
+    .stat-card strong {
+      display: block;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .metric-trend {
+      margin-top: 8px;
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(229, 229, 234, 0.72);
+      font-size: 14px;
+    }
+
+    .status-row:first-of-type {
+      border-top: 0;
+    }
+
+    .status-row span:last-child {
+      color: var(--text-muted);
+    }
+
+    .secondary-tabs {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 6px;
+      width: fit-content;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .secondary-tab {
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .secondary-tab.is-active {
+      background: var(--surface-strong);
+      color: var(--text);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .icon-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .delta.up {
+      color: #176a31;
+      background: rgba(52, 199, 89, 0.1);
+    }
+
+    .delta.warn {
+      color: #875f00;
+      background: rgba(255, 159, 10, 0.12);
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 18px;
+    }
+
+    .dashboard-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.86);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow-md);
+    }
+
+    .panel-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .device-row,
+    .activity-row,
+    .action-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface-strong);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .device-row:hover,
+    .activity-row:hover,
+    .action-row:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--line-strong);
+    }
+
+    .leading-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f2f8ff;
+      color: var(--primary);
+    }
+
+    .row-title {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .row-subtitle {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .status-tag,
+    .chip,
+    .tiny-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-tag.success,
+    .chip.success {
+      color: #176a31;
+      background: rgba(52, 199, 89, 0.12);
+    }
+
+    .status-tag.warning,
+    .chip.warning {
+      color: #875f00;
+      background: rgba(255, 159, 10, 0.14);
+    }
+
+    .status-tag.danger,
+    .chip.danger {
+      color: #8a1f19;
+      background: rgba(255, 59, 48, 0.12);
+    }
+
+    .status-tag.info,
+    .chip.info,
+    .tiny-pill {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .agent-card {
+      padding: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+    }
+
+    .agent-card + .agent-card {
+      margin-top: 14px;
+    }
+
+    .agent-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .agent-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #eff6ff 0%, #ddeafe 100%);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .agent-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .agent-desc {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .agent-metrics {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .agent-metrics .tiny-pill {
+      padding: 8px 10px;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 0.95fr;
+      gap: 18px;
+    }
+
+    .panel h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .component-block + .component-block {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(229, 229, 234, 0.76);
+    }
+
+    .component-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .btn-primary {
+      color: #ffffff;
+      background: linear-gradient(180deg, #2e90ff 0%, #007aff 100%);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: #ffffff;
+      border-color: var(--line);
+    }
+
+    .btn-tertiary {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      background: rgba(255, 59, 48, 0.1);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .input-shell,
+    .select-shell {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 14px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .input-shell:focus-within,
+    .select-shell:hover {
+      border-color: rgba(0, 122, 255, 0.32);
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .input-shell input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      outline: none;
+    }
+
+    .select-shell {
+      cursor: pointer;
+      justify-content: space-between;
+      color: var(--text);
+    }
+
+    .segmented {
+      display: inline-flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      background: #f1f4f9;
+      border: 1px solid rgba(229, 229, 234, 0.92);
+    }
+
+    .segment-button {
+      min-width: 92px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .segment-button.is-active {
+      color: var(--text);
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(0, 122, 255, 0.16);
+      background: linear-gradient(180deg, rgba(0, 122, 255, 0.08) 0%, rgba(0, 122, 255, 0.04) 100%);
+    }
+
+    .callout-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .callout p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .empty-state {
+      padding: 28px 20px;
+      text-align: center;
+      border: 1px dashed var(--line-strong);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(247, 249, 252, 0.9) 100%);
+    }
+
+    .empty-illustration {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      border-radius: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      background: linear-gradient(180deg, #eff6ff 0%, #dcebff 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .empty-state h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .empty-state p {
+      margin: 10px auto 18px;
+      max-width: 340px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .modal-preview {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 248, 251, 0.98) 100%);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .modal-preview p {
+      margin: 10px 0 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .preview-note {
+      margin-top: 14px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(16, 24, 40, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 80;
+    }
+
+    .modal-backdrop.is-visible {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 30px 70px rgba(15, 23, 42, 0.16);
+      padding: 24px;
+    }
+
+    .modal-card h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-card > p {
+      margin: 12px 0 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .modal-form {
+      margin-top: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .modal-form .field-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .modal-card-wrap {
+      position: relative;
+    }
+
+    @media (max-width: 1280px) {
+      .topbar {
+        grid-template-columns: 1fr;
+        border-radius: 28px;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .hero,
+      .dashboard-grid,
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1024px) {
+      body {
+        padding: 16px;
+      }
+
+      .hero-copy h1 {
+        font-size: 36px;
+      }
+
+      .field-grid,
+      .modal-form .field-grid,
+      .preview-stack {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topnav,
+      .secondary-tabs,
+      .component-row,
+      .hero-actions {
+        width: 100%;
+      }
+
+      .topnav,
+      .secondary-tabs {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+
+      .search-pill {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-shell">
+    <header class="topbar surface">
+      <div class="brand">
+        <div class="brand-mark">XZ</div>
+        <div class="brand-copy">
+          <p class="eyebrow">Apple Light Preview</p>
+          <p class="brand-title">小智控制中心</p>
+          <p class="brand-subtitle">明亮、克制、偏 Apple 的控制台方向样例</p>
+        </div>
+      </div>
+
+      <nav class="topnav" aria-label="主导航">
+        <button class="topnav-tab is-active" type="button">总览</button>
+        <button class="topnav-tab" type="button">设备</button>
+        <button class="topnav-tab" type="button">智能体</button>
+        <button class="topnav-tab" type="button">配置</button>
+        <button class="topnav-tab" type="button">账户</button>
+      </nav>
+
+      <div class="toolbar">
+        <label class="search-pill" aria-label="搜索">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 21L16.65 16.65M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input type="text" placeholder="搜索设备、智能体或配置">
+        </label>
+        <button class="icon-button" type="button" aria-label="通知">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M14.857 17H9.143M18 17V11.5C18 8.46243 15.9853 5.92766 13.2 5.14177C13.0712 3.93442 12.0607 3 10.8333 3C9.60588 3 8.59546 3.93442 8.46666 5.14177C5.68132 5.92766 3.66666 8.46243 3.66666 11.5V17L2 18.6667V19.5H20V18.6667L18 17ZM12 21C11.1716 21 10.5 20.3284 10.5 19.5H13.5C13.5 20.3284 12.8284 21 12 21Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="avatar-button" type="button" aria-label="用户菜单">
+          <span class="avatar-chip">XZ</span>
+          <span>Admin</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-body">
+      <section class="hero surface">
+        <div class="hero-copy">
+          <p class="eyebrow primary">Visual Direction</p>
+          <h1>更明亮、更安静，也更像一款认真打磨过的 Apple 风控制台。</h1>
+          <p>
+            这不是业务页还原，而是一张用于看整体方向的静态样例。重点验证顶部菜单、层级留白、
+            卡片密度、按钮语言、表单细节，以及弹窗在浅色界面里的气质是否足够干净克制。
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button" data-open-modal>打开弹窗预览</button>
+            <button class="btn btn-secondary" type="button">查看组件语言</button>
+            <button class="btn btn-tertiary" type="button">导出静态稿</button>
+          </div>
+
+          <div class="hero-meta">
+            <span class="status-pill"><span class="dot"></span>当前方向：Apple Light / Professional</span>
+            <span>桌面端样例</span>
+            <span>顶部标签导航</span>
+            <span>不接真实数据</span>
+          </div>
+        </div>
+
+        <div class="hero-preview">
+          <div class="preview-card">
+            <header>
+              <div>
+                <p class="panel-title">实时概览</p>
+                <p class="subtext">轻量信息块 + 低对比度背景</p>
+              </div>
+              <span class="chip success"><span class="tag-dot"></span>全部正常</span>
+            </header>
+
+            <div class="preview-stack">
+              <div class="mini-metric">
+                <strong>128</strong>
+                <div class="metric-label">在线设备</div>
+                <div class="metric-trend">+12.4% 今日活跃</div>
+              </div>
+              <div class="mini-metric">
+                <strong>32</strong>
+                <div class="metric-label">智能体实例</div>
+                <div class="metric-trend">+4 个新增配置</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-card">
+            <header>
+              <div>
+                <p class="panel-title">系统状态</p>
+                <p class="subtext">卡片内层级和状态色表达</p>
+              </div>
+              <span class="tiny-pill">09:41 更新</span>
+            </header>
+
+            <div class="status-row">
+              <span class="status-tag success"><span class="dot"></span>语音链路</span>
+              <span>首包 182 ms</span>
+            </div>
+            <div class="status-row">
+              <span class="status-tag info"><span class="dot"></span>知识检索</span>
+              <span>缓存命中 92%</span>
+            </div>
+            <div class="status-row">
+              <span class="status-tag warning"><span class="dot"></span>配置变更</span>
+              <span>2 项待发布</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="secondary-tabs" aria-label="二级筛选">
+        <button class="secondary-tab is-active" type="button">总览</button>
+        <button class="secondary-tab" type="button">健康状态</button>
+        <button class="secondary-tab" type="button">自动化</button>
+        <button class="secondary-tab" type="button">队列与连接</button>
+      </div>
+
+      <section class="stats-grid" aria-label="统计卡片">
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 19H20M7 16V10M12 16V5M17 16V13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="delta up">+18.2%</span>
+          </div>
+          <strong>8,426</strong>
+          <div class="stat-label">今日请求总量</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 6V12L16 14M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="delta up">-34 ms</span>
+          </div>
+          <strong>182 ms</strong>
+          <div class="stat-label">平均首包延迟</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 7L12 3L4 7M20 7V17L12 21M20 7L12 11M4 7V17L12 21M4 7L12 11M12 11V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="delta warn">2 待确认</span>
+          </div>
+          <strong>37</strong>
+          <div class="stat-label">活跃自动化任务</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 7V12L15 15M6.5 4.5L4 7M17.5 4.5L20 7M5 13C5 8.58172 8.58172 5 13 5C17.4183 5 21 8.58172 21 13C21 17.4183 17.4183 21 13 21C8.58172 21 5 17.4183 5 13ZM3 13H5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="delta up">99.98%</span>
+          </div>
+          <strong>5 min</strong>
+          <div class="stat-label">服务健康窗口</div>
+        </article>
+      </section>
+
+      <section class="dashboard-grid">
+        <div class="panel">
+          <header class="panel-header">
+            <div>
+              <p class="panel-title">设备状态</p>
+              <p class="subtext">更像 Apple 的白色卡片层级，而不是厚重后台块。</p>
+            </div>
+            <span class="panel-actions">查看全部</span>
+          </header>
+
+          <div class="list">
+            <div class="device-row">
+              <span class="leading-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="7" y="3" width="10" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M11 18H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <div>
+                <p class="row-title">门厅语音终端</p>
+                <p class="row-subtitle">已连接 · 绑定智能体「前台接待」</p>
+              </div>
+              <span class="status-tag success"><span class="tag-dot"></span>在线</span>
+            </div>
+
+            <div class="device-row">
+              <span class="leading-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="6" y="4" width="12" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M9 8H15M9 12H15M9 16H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <div>
+                <p class="row-title">会议室播报节点</p>
+                <p class="row-subtitle">最近一次延迟升高，需要观察 TTS 队列</p>
+              </div>
+              <span class="status-tag warning"><span class="tag-dot"></span>波动</span>
+            </div>
+
+            <div class="device-row">
+              <span class="leading-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 7H19M7 11H17M9 15H15M11 19H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <div>
+                <p class="row-title">实验室边缘盒子</p>
+                <p class="row-subtitle">固件待更新 · 上次活动 2 小时前</p>
+              </div>
+              <span class="status-tag danger"><span class="tag-dot"></span>待处理</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-stack">
+          <div class="panel">
+            <header class="panel-header">
+              <div>
+                <p class="panel-title">智能体概览</p>
+                <p class="subtext">更柔和、更干净的卡片群。</p>
+              </div>
+              <span class="chip info">3 个活跃</span>
+            </header>
+
+            <div class="agent-card">
+              <div class="agent-top">
+                <div style="display:flex;gap:12px;">
+                  <span class="agent-avatar">AI</span>
+                  <div>
+                    <p class="agent-title">前台接待</p>
+                    <p class="agent-desc">多轮对话稳定，适合设备欢迎词和信息问答场景。</p>
+                  </div>
+                </div>
+                <span class="chip success">运行中</span>
+              </div>
+              <div class="agent-metrics">
+                <span class="tiny-pill">会话 1,204</span>
+                <span class="tiny-pill">满意度 96%</span>
+                <span class="tiny-pill">语音首包 168 ms</span>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div class="agent-top">
+                <div style="display:flex;gap:12px;">
+                  <span class="agent-avatar">KB</span>
+                  <div>
+                    <p class="agent-title">知识库助手</p>
+                    <p class="agent-desc">检索链路正常，适合内部 FAQ 和设备运维辅助。</p>
+                  </div>
+                </div>
+                <span class="chip warning">调优中</span>
+              </div>
+              <div class="agent-metrics">
+                <span class="tiny-pill">索引 48 个</span>
+                <span class="tiny-pill">命中率 92%</span>
+                <span class="tiny-pill">缓存热度高</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <header class="panel-header">
+              <div>
+                <p class="panel-title">快捷操作</p>
+                <p class="subtext">按钮主次清晰，避免旧后台感。</p>
+              </div>
+            </header>
+
+            <div class="list">
+              <div class="action-row">
+                <span class="leading-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 12H20M12 4V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <div>
+                  <p class="row-title">创建配置草稿</p>
+                  <p class="row-subtitle">从模板快速生成新环境。</p>
+                </div>
+                <button class="btn btn-secondary" type="button">打开</button>
+              </div>
+
+              <div class="action-row">
+                <span class="leading-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <div>
+                  <p class="row-title">运行健康检查</p>
+                  <p class="row-subtitle">测试语音、模型、队列和网络链路。</p>
+                </div>
+                <button class="btn btn-primary" type="button">执行</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="showcase-grid">
+        <div class="panel">
+          <header class="panel-header">
+            <div>
+              <p class="panel-title">组件语言</p>
+              <p class="subtext">按钮、表单、标签、提醒和分段控件统一成一套苹果风语气。</p>
+            </div>
+          </header>
+
+          <div class="component-block">
+            <h3>按钮层级</h3>
+            <div class="component-row">
+              <button class="btn btn-primary" type="button">主要操作</button>
+              <button class="btn btn-secondary" type="button">次要操作</button>
+              <button class="btn btn-tertiary" type="button">文本强调</button>
+              <button class="btn btn-danger" type="button">危险操作</button>
+            </div>
+          </div>
+
+          <div class="component-block">
+            <h3>表单与搜索</h3>
+            <div class="field-grid">
+              <div class="field">
+                <label for="demo-search">搜索框</label>
+                <div class="input-shell">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M21 21L16.65 16.65M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <input id="demo-search" type="text" placeholder="搜索配置关键字">
+                </div>
+              </div>
+
+              <div class="field">
+                <label>下拉选择</label>
+                <div class="select-shell" role="button" tabindex="0" aria-label="选择环境">
+                  <span>生产环境</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="demo-input">输入框</label>
+                <div class="input-shell">
+                  <input id="demo-input" type="text" value="队列降级阈值 182 ms">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="component-block">
+            <h3>分段控件与状态标签</h3>
+            <div class="component-row" style="align-items:center;justify-content:space-between;">
+              <div class="segmented" aria-label="时间维度">
+                <button class="segment-button is-active" type="button">今日</button>
+                <button class="segment-button" type="button">本周</button>
+                <button class="segment-button" type="button">本月</button>
+              </div>
+
+              <div class="chip-row">
+                <span class="chip success"><span class="tag-dot"></span>在线</span>
+                <span class="chip warning"><span class="tag-dot"></span>待确认</span>
+                <span class="chip danger"><span class="tag-dot"></span>异常</span>
+                <span class="chip info"><span class="tag-dot"></span>草稿</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="component-block">
+            <h3>提醒样式</h3>
+            <div class="callout">
+              <span class="callout-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 8V12M12 16H12.01M10.29 3.85999L1.82001 18C1.64539 18.3024 1.55038 18.6441 1.5441 18.9927C1.53782 19.3412 1.62048 19.6861 1.78409 19.9945C1.9477 20.3029 2.18691 20.5645 2.47942 20.7555C2.77192 20.9466 3.1082 21.0608 3.45601 21.087H20.544C20.8918 21.0608 21.2281 20.9466 21.5206 20.7555C21.8131 20.5645 22.0523 20.3029 22.2159 19.9945C22.3795 19.6861 22.4622 19.3412 22.4559 18.9927C22.4496 18.6441 22.3546 18.3024 22.18 18L13.71 3.85999C13.5104 3.57576 13.2453 3.34375 12.9371 3.18334C12.6288 3.02293 12.2864 2.93896 11.939 2.93896C11.5916 2.93896 11.2492 3.02293 10.9409 3.18334C10.6327 3.34375 10.3676 3.57576 10.168 3.85999H10.29Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <div>
+                <strong>浅色界面下也保留系统控制台的可靠感</strong>
+                <p>通过细边框、低对比背景和清晰的主次按钮，避免旧式后台的厚重深蓝，同时不丢掉控制台应有的秩序和信息密度。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <header class="panel-header">
+            <div>
+              <p class="panel-title">空状态与弹窗</p>
+              <p class="subtext">看组件在浅色主题下是否足够统一。</p>
+            </div>
+          </header>
+
+          <div class="empty-state">
+            <div class="empty-illustration">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 16V12M12 8H12.01M4.92893 19H19.0711C20.4677 19 21.3354 17.4965 20.6464 16.2929L13.5753 3.9974C12.8799 2.78843 11.1201 2.78843 10.4247 3.9974L3.35358 16.2929C2.66461 17.4965 3.53234 19 4.92893 19Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>还没有配置草稿</h3>
+            <p>这个空状态故意做得更轻、更白、更像原生应用，让内容成为主角，而不是大块深色容器。</p>
+            <button class="btn btn-primary" type="button">新建草稿</button>
+          </div>
+
+          <div class="modal-preview">
+            <div class="panel-header" style="margin-bottom:0;">
+              <div>
+                <p class="panel-title">弹窗样例</p>
+                <p class="subtext">用于确认标题、正文和底部操作层级。</p>
+              </div>
+            </div>
+            <p>点击下面的按钮会打开一个真正的演示弹窗。它不接任何逻辑，只用于让你判断浅色磨砂层和按钮层级是不是你想要的味道。</p>
+            <div class="modal-actions">
+              <button class="btn btn-secondary" type="button">取消</button>
+              <button class="btn btn-primary" type="button" data-open-modal>打开预览</button>
+            </div>
+          </div>
+
+          <p class="preview-note">
+            这一页的目标不是还原现有业务，而是先锁“整体风格”。如果这个方向对，我们下一步就把它映射到现有 `Layout`、`Dashboard` 和 `UserConsole`。
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="preview-modal" aria-hidden="true">
+    <div class="modal-card modal-card-wrap">
+      <button class="icon-button modal-close" type="button" aria-label="关闭弹窗" data-close-modal>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <h2>确认这版视觉方向</h2>
+      <p>这是一张仅用于审美判断的演示弹窗。它展示了浅色磨砂层、标题层级、表单样式和主次按钮的关系，不绑定任何真实提交行为。</p>
+
+      <div class="modal-form">
+        <div class="field-grid">
+          <div class="field">
+            <label for="modal-title">预览名称</label>
+            <div class="input-shell">
+              <input id="modal-title" type="text" value="Apple Light Preview">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>界面基调</label>
+            <div class="select-shell" role="button" tabindex="0" aria-label="选择界面基调">
+              <span>明亮且克制</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <span class="callout-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 16V12M12 8H12.01M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <div>
+            <strong>适合下一步迁移到正式项目</strong>
+            <p>如果这张样例页的气质对了，正式实现时会先改桌面端壳子、仪表板和用户控制台，再逐步让其它配置页吃到统一主题。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" data-close-modal>再看看</button>
+        <button class="btn btn-primary" type="button">确认方向</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const topTabs = document.querySelectorAll(".topnav-tab");
+      const secondaryTabs = document.querySelectorAll(".secondary-tab");
+      const segmentButtons = document.querySelectorAll(".segment-button");
+      const modal = document.getElementById("preview-modal");
+      const openButtons = document.querySelectorAll("[data-open-modal]");
+      const closeButtons = document.querySelectorAll("[data-close-modal]");
+
+      function activateButton(buttons, current) {
+        buttons.forEach((button) => button.classList.remove("is-active"));
+        current.classList.add("is-active");
+      }
+
+      topTabs.forEach((tab) => {
+        tab.addEventListener("click", function () {
+          activateButton(topTabs, tab);
+        });
+      });
+
+      secondaryTabs.forEach((tab) => {
+        tab.addEventListener("click", function () {
+          activateButton(secondaryTabs, tab);
+        });
+      });
+
+      segmentButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          activateButton(segmentButtons, button);
+        });
+      });
+
+      function openModal() {
+        modal.classList.add("is-visible");
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeModal() {
+        modal.classList.remove("is-visible");
+        modal.setAttribute("aria-hidden", "true");
+      }
+
+      openButtons.forEach((button) => {
+        button.addEventListener("click", openModal);
+      });
+
+      closeButtons.forEach((button) => {
+        button.addEventListener("click", closeModal);
+      });
+
+      modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

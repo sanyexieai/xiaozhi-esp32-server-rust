@@ -1,0 +1,222 @@
+{
+  "qwen3-tts-flash": [
+    {
+      "value": "Cherry",
+      "label": "芊悦"
+    },
+    {
+      "value": "Serena",
+      "label": "苏瑶"
+    },
+    {
+      "value": "Ethan",
+      "label": "晨煦"
+    },
+    {
+      "value": "Chelsie",
+      "label": "千雪"
+    },
+    {
+      "value": "Momo",
+      "label": "茉兔"
+    },
+    {
+      "value": "Vivian",
+      "label": "十三"
+    },
+    {
+      "value": "Moon",
+      "label": "月白"
+    },
+    {
+      "value": "Maia",
+      "label": "四月"
+    },
+    {
+      "value": "Kai",
+      "label": "凯"
+    },
+    {
+      "value": "Nofish",
+      "label": "不吃鱼"
+    },
+    {
+      "value": "Bella",
+      "label": "萌宝"
+    },
+    {
+      "value": "Jennifer",
+      "label": "詹妮弗"
+    },
+    {
+      "value": "Ryan",
+      "label": "甜茶"
+    },
+    {
+      "value": "Katerina",
+      "label": "卡捷琳娜"
+    },
+    {
+      "value": "Aiden",
+      "label": "艾登"
+    },
+    {
+      "value": "Eldric Sage",
+      "label": "沧明子"
+    },
+    {
+      "value": "Mia",
+      "label": "乖小妹"
+    },
+    {
+      "value": "Mochi",
+      "label": "沙小弥"
+    },
+    {
+      "value": "Bellona",
+      "label": "燕铮莺"
+    },
+    {
+      "value": "Vincent",
+      "label": "田叔"
+    },
+    {
+      "value": "Bunny",
+      "label": "萌小姬"
+    },
+    {
+      "value": "Neil",
+      "label": "阿闻"
+    },
+    {
+      "value": "Elias",
+      "label": "墨讲师"
+    },
+    {
+      "value": "Arthur",
+      "label": "徐大爷"
+    },
+    {
+      "value": "Nini",
+      "label": "邻家妹妹"
+    },
+    {
+      "value": "Ebona",
+      "label": "诡婆婆"
+    },
+    {
+      "value": "Seren",
+      "label": "小婉"
+    },
+    {
+      "value": "Pip",
+      "label": "顽屁小孩"
+    },
+    {
+      "value": "Stella",
+      "label": "少女阿月"
+    },
+    {
+      "value": "Bodega",
+      "label": "博德加"
+    },
+    {
+      "value": "Sonrisa",
+      "label": "索尼莎"
+    },
+    {
+      "value": "Alek",
+      "label": "阿列克"
+    },
+    {
+      "value": "Dolce",
+      "label": "多尔切"
+    },
+    {
+      "value": "Sohee",
+      "label": "素熙"
+    },
+    {
+      "value": "Ono Anna",
+      "label": "小野杏"
+    },
+    {
+      "value": "Lenn",
+      "label": "莱恩"
+    },
+    {
+      "value": "Emilien",
+      "label": "埃米尔安"
+    },
+    {
+      "value": "Andre",
+      "label": "安德雷"
+    },
+    {
+      "value": "Radio Gol",
+      "label": "拉迪奥·戈尔"
+    },
+    {
+      "value": "Jada",
+      "label": "上海-阿珍"
+    },
+    {
+      "value": "Dylan",
+      "label": "北京-晓东"
+    },
+    {
+      "value": "Li",
+      "label": "南京-老李"
+    },
+    {
+      "value": "Marcus",
+      "label": "陕西-秦川"
+    },
+    {
+      "value": "Roy",
+      "label": "闽南-阿杰"
+    },
+    {
+      "value": "Peter",
+      "label": "天津-李彼得"
+    },
+    {
+      "value": "Sunny",
+      "label": "四川-晴儿"
+    },
+    {
+      "value": "Eric",
+      "label": "四川-程川"
+    },
+    {
+      "value": "Rocky",
+      "label": "粤语-阿强"
+    },
+    {
+      "value": "Kiki",
+      "label": "粤语-阿清"
+    }
+  ],
+  "qwen-tts": [
+    {
+      "value": "Cherry",
+      "label": "芊悦"
+    },
+    {
+      "value": "Serena",
+      "label": "苏瑶"
+    },
+    {
+      "value": "Ethan",
+      "label": "晨煦"
+    },
+    {
+      "value": "Chelsie",
+      "label": "千雪"
+    },
+    {
+      "value": "Momo",
+      "label": "茉兔"
+    }
+  ]
+}

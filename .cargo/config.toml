@@ -1,0 +1,7 @@
+# scripts/build-opus.ps1 会生成 target/opus-build/install
+# 若 cargo build 报找不到 opus，先运行: powershell -File scripts/build-opus.ps1
+#
+# TEN-VAD 预编译库位于 workspace/lib/ten-vad（含 include/ 与 lib/Windows|Linux|macOS）
+# 可选覆盖：TEN_VAD_LIB_DIR
+[env]
+OPUS_LIB_DIR = { value = "target/opus-build/install", relative = true }

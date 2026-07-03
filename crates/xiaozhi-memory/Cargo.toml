@@ -1,0 +1,13 @@
+[package]
+name = "xiaozhi-memory"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-llm.workspace = true
+async-trait.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+tracing.workspace = true

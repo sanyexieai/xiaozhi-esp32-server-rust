@@ -1,0 +1,15 @@
+[package]
+name = "xiaozhi-config-provider"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-config.workspace = true
+async-trait.workspace = true
+reqwest.workspace = true
+redis.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+dashmap.workspace = true

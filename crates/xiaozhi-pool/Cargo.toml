@@ -1,0 +1,15 @@
+[package]
+name = "xiaozhi-pool"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-config.workspace = true
+tokio.workspace = true
+dashmap.workspace = true
+parking_lot.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true

@@ -1,0 +1,37 @@
+[package]
+name = "xiaozhi-chat"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-protocol.workspace = true
+xiaozhi-config.workspace = true
+xiaozhi-config-provider.workspace = true
+xiaozhi-vad.workspace = true
+xiaozhi-asr.workspace = true
+xiaozhi-llm.workspace = true
+xiaozhi-tts.workspace = true
+xiaozhi-memory.workspace = true
+xiaozhi-mcp.workspace = true
+xiaozhi-rag.workspace = true
+xiaozhi-speaker.workspace = true
+xiaozhi-openclaw.workspace = true
+xiaozhi-pool.workspace = true
+xiaozhi-history.workspace = true
+tokio.workspace = true
+tokio-util = { version = "0.7", features = ["rt"] }
+futures-util = "0.3"
+base64.workspace = true
+reqwest = { version = "0.12", features = ["json", "stream"] }
+urlencoding = "2"
+serde_json.workspace = true
+serde = { workspace = true, features = ["derive"] }
+dashmap.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+regex.workspace = true
+parking_lot.workspace = true
+opus.workspace = true
+audiopus_sys.workspace = true
+minimp3 = "0.5"

@@ -1,0 +1,17 @@
+[package]
+name = "xiaozhi-speaker"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+xiaozhi-core.workspace = true
+xiaozhi-config.workspace = true
+async-trait.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+tokio-tungstenite.workspace = true
+futures-util = "0.3"
+dashmap.workspace = true
+parking_lot.workspace = true
