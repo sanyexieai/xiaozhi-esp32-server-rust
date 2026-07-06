@@ -536,6 +536,7 @@ export function useDeviceChatSimulator(options = {}) {
     sendAudioFrame,
     sendVisionRequest,
     invokeMcpSkill,
+    notifySystem: pushSystem,
     buildListenStart,
     buildListenStop
   }

@@ -383,16 +383,15 @@ async fn handle_socket(
             remaining = chat_mgr.endpoint_count(),
             "WebSocket endpoint 已注销"
         );
-        if endpoint_empty {
+        let retain_session = xiaozhi_core::constants::ota_test::is_probe_device(&device_id)
+            || xiaozhi_core::constants::simulator::is_simulator_device(&device_id);
+        if endpoint_empty && !retain_session {
             state
                 .chat_registry
                 .remove_and_shutdown(&device_id)
                 .await;
         }
-        if endpoint_empty
-            && !xiaozhi_core::constants::ota_test::is_probe_device(&device_id)
-            && !xiaozhi_core::constants::simulator::is_simulator_device(&device_id)
-        {
+        if endpoint_empty && !retain_session {
             let mut event_data = HashMap::new();
             event_data.insert("device_id".to_string(), json!(device_id));
             state

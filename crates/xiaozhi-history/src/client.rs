@@ -36,6 +36,10 @@ impl HistoryClient {
         }
     }
 
+    fn effective_base_url(&self) -> String {
+        xiaozhi_config::resolve_manager_backend_url(&self.base_url)
+    }
+
     pub async fn report_chat(
         &self,
         device_id: &str,
@@ -65,7 +69,7 @@ impl HistoryClient {
 
         let url = format!(
             "{}/api/internal/history/messages",
-            self.base_url.trim_end_matches('/')
+            self.effective_base_url().trim_end_matches('/')
         );
         let message_id = uuid::Uuid::new_v4().to_string();
         let mut body = json!({
@@ -122,7 +126,7 @@ impl HistoryClient {
         }
         let url = format!(
             "{}/api/internal/history/sessions/{}/dialogue",
-            self.base_url.trim_end_matches('/'),
+            self.effective_base_url().trim_end_matches('/'),
             session_id.trim()
         );
         let resp = match self
@@ -171,7 +175,7 @@ impl HistoryClient {
         }
         let url = format!(
             "{}/api/internal/pool/stats",
-            self.base_url.trim_end_matches('/')
+            self.effective_base_url().trim_end_matches('/')
         );
         let _ = self
             .client

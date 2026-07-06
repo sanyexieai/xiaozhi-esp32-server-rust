@@ -22,6 +22,7 @@ use tokio_tungstenite::{
 use crate::app::{json_data, AppState};
 use crate::auth::decode_token;
 use crate::extractors::{AdminUser, AuthUser};
+use crate::handlers::devices;
 use crate::ota_test;
 
 #[derive(Debug, Deserialize)]
@@ -37,6 +38,28 @@ pub struct SimulatorWsQuery {
 
 fn default_protocol_version() -> u8 {
     1
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SimulatorSignalsQuery {
+    pub device_id: String,
+    #[serde(default)]
+    pub after_id: u64,
+    #[serde(default)]
+    pub clear: bool,
+}
+
+/// 按 device_id 拉取服务端信令流水（模拟器连接后无 DB id 时也可调试 MCP）。
+pub async fn simulator_signals(
+    State(state): State<AppState>,
+    AdminUser(_): AdminUser,
+    Query(query): Query<SimulatorSignalsQuery>,
+) -> Result<Json<Value>, StatusCode> {
+    let device_id = query.device_id.trim().to_string();
+    if device_id.is_empty() {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+    Ok(devices::fetch_device_signals(&state, &device_id, query.after_id, query.clear).await)
 }
 
 /// 模拟器页面所需配置（WebSocket 目标地址、代理路径等）。

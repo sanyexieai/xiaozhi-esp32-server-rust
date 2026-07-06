@@ -26,7 +26,7 @@ config_provider:
   enable_periodic_update: true
   update_interval: 5m
 manager:
-  backend_url: http://127.0.0.1:8080
+  backend_url: http://127.0.0.1:8099
   auth_token: xiaozhi_admin_secret_key
   endpoint_auth_token: xiaozhi_mcp_openclaw_secret_key
   history_timeout: 5s

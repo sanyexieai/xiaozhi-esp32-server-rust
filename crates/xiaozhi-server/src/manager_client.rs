@@ -17,7 +17,7 @@ use tokio_tungstenite::{
 use tracing::{error, info, warn};
 use uuid::Uuid;
 use xiaozhi_auth::create_manager_ws_token;
-use xiaozhi_config::AppConfig;
+use xiaozhi_config::{manager_ws_url_candidates, AppConfig};
 
 use crate::bridge::{BridgeDispatcher, WsRequest, WsResponse};
 
@@ -29,7 +29,7 @@ type WsWrite = futures_util::stream::SplitSink<
 type PendingMap = Arc<RwLock<HashMap<String, tokio::sync::oneshot::Sender<WsResponse>>>>;
 
 pub struct ManagerWsClient {
-    ws_url: String,
+    config_backend_url: String,
     endpoint_auth_token: String,
     client_uuid: String,
     dispatcher: Arc<BridgeDispatcher>,
@@ -40,8 +40,9 @@ pub struct ManagerWsClient {
 
 impl ManagerWsClient {
     pub fn new(config: &AppConfig, dispatcher: Arc<BridgeDispatcher>) -> Arc<Self> {
+        let config_backend_url = config.manager.backend_url.clone();
         Arc::new(Self {
-            ws_url: backend_to_ws_url(&config.manager.backend_url),
+            config_backend_url,
             endpoint_auth_token: config.manager.endpoint_auth_token.clone(),
             client_uuid: Uuid::new_v4().to_string(),
             dispatcher,
@@ -128,9 +129,24 @@ impl ManagerWsClient {
         let token = create_manager_ws_token(&self.endpoint_auth_token, &self.client_uuid, 3600)
             .map_err(|e| anyhow::anyhow!(e.to_string()))?;
 
-        let mut request = self
-            .ws_url
-            .as_str()
+        let candidates = manager_ws_url_candidates(&self.config_backend_url);
+        let mut last_err: Option<anyhow::Error> = None;
+
+        for ws_url in candidates {
+            match self.connect_ws(&ws_url, &token).await {
+                Ok(()) => return Ok(()),
+                Err(e) => {
+                    warn!("Manager WS {ws_url} 连接失败: {e:#}");
+                    last_err = Some(e);
+                }
+            }
+        }
+
+        Err(last_err.unwrap_or_else(|| anyhow::anyhow!("没有可用的 Manager WS 地址")))
+    }
+
+    async fn connect_ws(self: &Arc<Self>, ws_url: &str, token: &str) -> anyhow::Result<()> {
+        let mut request = ws_url
             .into_client_request()
             .map_err(|e| anyhow::anyhow!("WS 请求构建失败: {e}"))?;
         request.headers_mut().insert(
@@ -141,9 +157,9 @@ impl ManagerWsClient {
             .headers_mut()
             .insert("UUID", HeaderValue::from_str(&self.client_uuid)?);
 
-        info!("正在连接 Manager WS: {}", self.ws_url);
+        info!("正在连接 Manager WS: {ws_url}");
         let (ws, _) = connect_async(request).await?;
-        info!("Manager WS 已连接 (uuid={})", self.client_uuid);
+        info!("Manager WS 已连接: {ws_url} (uuid={})", self.client_uuid);
 
         let (write, mut read) = ws.split();
         *self.write.lock().await = Some(write);
@@ -216,16 +232,5 @@ impl ManagerWsClient {
         *self.write.lock().await = None;
         self.connected.store(false, Ordering::SeqCst);
         Ok(())
-    }
-}
-
-fn backend_to_ws_url(backend_url: &str) -> String {
-    let url = backend_url.trim_end_matches('/');
-    if let Some(rest) = url.strip_prefix("https://") {
-        format!("wss://{rest}/ws")
-    } else if let Some(rest) = url.strip_prefix("http://") {
-        format!("ws://{rest}/ws")
-    } else {
-        format!("ws://{url}/ws")
     }
 }

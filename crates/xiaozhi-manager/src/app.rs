@@ -652,6 +652,10 @@ pub fn build_router(state: AppState) -> Router {
             "/admin/device-simulator/ws",
             get(handlers::device_simulator::ws_handler),
         )
+        .route(
+            "/admin/device-simulator/signals",
+            get(handlers::device_simulator::simulator_signals),
+        )
         .route("/internal/device/activated", get(handlers::internal::device_activated))
         .route("/internal/device/activation", get(handlers::internal::device_activation))
         .route("/internal/device/activate", post(handlers::internal::device_activate))

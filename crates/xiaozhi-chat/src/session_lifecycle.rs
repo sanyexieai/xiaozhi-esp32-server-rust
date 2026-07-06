@@ -140,36 +140,48 @@ impl ChatManager {
     }
 
     pub async fn close_session_with_reason(self: Arc<Self>, reason: SessionCloseReason) {
-        self.session_closing.store(true, Ordering::SeqCst);
+        if self.session_closing.swap(true, Ordering::SeqCst) {
+            tracing::debug!(
+                device_id = %self.device_id(),
+                reason = reason.as_str(),
+                "会话关闭已在进行中，跳过重复请求"
+            );
+            return;
+        }
 
         if let Some(handle) = self.idle_watchdog.lock().await.take() {
             handle.abort();
         }
         self.cancel_retained_session_cleanup("session_closed").await;
 
-        let mut guard = self.session.lock().await;
-        let closing_session_id = guard
-            .as_ref()
-            .map(|s| s.state().session_id.clone())
-            .filter(|s| !s.is_empty())
-            .or_else(|| {
-                self.hello_session_id
-                    .try_lock()
-                    .ok()
-                    .and_then(|g| g.clone())
-                    .filter(|s| !s.is_empty())
-            });
-        let Some(mut session) = guard.take() else {
+        let closing_session_id = {
+            let guard = self.session.lock().await;
+            guard
+                .as_ref()
+                .map(|s| s.state().session_id.clone())
+                .filter(|s| !s.is_empty())
+                .or_else(|| {
+                    self.hello_session_id
+                        .try_lock()
+                        .ok()
+                        .and_then(|g| g.clone())
+                        .filter(|s| !s.is_empty())
+                })
+        };
+
+        if let Some(tts) = self.tts_manager().await {
+            tts.interrupt_and_stop_sync(true, reason.as_str())
+                .await;
+        }
+
+        let taken_session = {
+            let mut guard = self.session.lock().await;
+            guard.take()
+        };
+        let Some(mut session) = taken_session else {
             self.session_closing.store(false, Ordering::SeqCst);
             return;
         };
-        drop(guard);
-
-        self.send_mqtt_goodbye_for_close(reason, closing_session_id.clone())
-            .await;
-
-        session.reset_to_silent_state(self.as_ref()).await;
-        drop(session);
 
         self.clear_injected_speech_guard();
 
@@ -190,14 +202,61 @@ impl ChatManager {
         *self.session_media.lock().await = None;
         *self.session_abort.lock().await = None;
 
+        // 释放关闭门闩，允许 hello / init_session 立即重建会话；慢清理放后台。
+        self.session_closing.store(false, Ordering::SeqCst);
+
         tracing::info!(
             device_id = %self.device_id(),
             reason = reason.as_str(),
-            "ChatSession 已关闭"
+            "ChatSession 已关闭（资源已释放）"
         );
 
-        self.apply_session_closed_side_effects(reason).await;
+        let mgr = Arc::clone(&self);
+        let sid = closing_session_id;
+        if reason == SessionCloseReason::ManagerShutdown {
+            mgr.send_mqtt_goodbye_for_close(reason, sid).await;
+            session.reset_to_silent_state(mgr.as_ref()).await;
+            drop(session);
+            mgr.apply_session_closed_side_effects(reason).await;
+            return;
+        }
+
+        tokio::spawn(async move {
+            mgr.send_mqtt_goodbye_for_close(reason, sid).await;
+            session.reset_to_silent_state(mgr.as_ref()).await;
+            drop(session);
+            mgr.apply_session_closed_side_effects(reason).await;
+        });
+    }
+
+    /// 关闭流程卡住时强制恢复，避免 Web 模拟器重连长期失败。
+    pub(crate) async fn force_recover_stuck_session_close(&self, reason: &str) {
+        if !self.session_closing.load(Ordering::SeqCst) {
+            return;
+        }
+        tracing::warn!(
+            device_id = %self.device_id(),
+            reason,
+            "强制结束卡住的会话关闭流程"
+        );
+        if let Some(handle) = self.idle_watchdog.lock().await.take() {
+            handle.abort();
+        }
+        self.cancel_retained_session_cleanup(reason).await;
+        if let Some(tts) = self.tts_manager().await {
+            tts.interrupt_and_stop_sync(true, reason).await;
+        }
+        {
+            let mut guard = self.session.lock().await;
+            guard.take();
+        }
+        *self.tts_manager.lock().await = None;
+        *self.llm_manager.lock().await = None;
+        *self.session_media.lock().await = None;
+        *self.session_abort.lock().await = None;
+        self.clear_injected_speech_guard();
         self.session_closing.store(false, Ordering::SeqCst);
+        self.mark_need_fresh_hello();
     }
 
     async fn send_mqtt_goodbye_for_close(

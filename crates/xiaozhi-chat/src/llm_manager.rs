@@ -6,6 +6,8 @@ use std::sync::Weak;
 use tokio::sync::{mpsc, oneshot};
 use xiaozhi_core::Result;
 use xiaozhi_llm::{ChatMessage, ToolInfo};
+
+use crate::mcp_tools::{food_delivery_tool_retry_hint, user_text_prefers_food_delivery_tools};
 use xiaozhi_protocol::messages::ServerMessage;
 
 use crate::llm_types::LlmResponseChunk;
@@ -151,6 +153,12 @@ impl LlmManager {
         }
 
         const MAX_TOOL_ROUNDS: usize = 5;
+        let last_user_text = dialogue
+            .iter()
+            .rev()
+            .find(|m| m.role == xiaozhi_llm::MessageRole::User)
+            .map(|m| m.content.clone())
+            .unwrap_or_default();
         for round in 0..MAX_TOOL_ROUNDS {
             if manager.is_session_aborted().await {
                 break;
@@ -171,7 +179,11 @@ impl LlmManager {
                 let mut stop_llm = false;
                 for call in &completion.tool_calls {
                     let outcome = manager
-                        .execute_mcp_tool_for_llm(&call.name, call.arguments.clone())
+                        .execute_mcp_tool_for_llm(
+                            &call.name,
+                            call.arguments.clone(),
+                            &call.id,
+                        )
                         .await;
                     if outcome.stop_llm {
                         stop_llm = true;
@@ -188,6 +200,18 @@ impl LlmManager {
             }
 
             if !completion.content.is_empty() {
+                if round == 0
+                    && !completion.has_tool_calls()
+                    && user_text_prefers_food_delivery_tools(&last_user_text, &tools)
+                {
+                    tracing::info!(
+                        device_id = %manager.device_id(),
+                        user_text = %last_user_text,
+                        "外卖/点餐意图未走 MCP，追加提示后重试"
+                    );
+                    dialogue.push(ChatMessage::system(food_delivery_tool_retry_hint()));
+                    continue;
+                }
                 return self
                     .run_tts_for_text(
                         &manager,

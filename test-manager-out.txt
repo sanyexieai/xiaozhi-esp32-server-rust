@@ -1,0 +1,5 @@
+2026-07-06 10:46:01.753  INFO xiaozhi_logging: 统一日志体系已初始化 service=xiaozhi-manager stdout=true file=Some("config\\../logs/server.log") database=Some("data/manager.db")
+2026-07-06 10:46:01.794 DEBUG xiaozhi_manager::network: 端口 8080 已被占用，尝试下一个
+2026-07-06 10:46:01.795  WARN xiaozhi_manager::network: 端口 8080 已被占用，已自动切换到 8081
+2026-07-06 10:46:01.796  INFO xiaozhi_manager: Manager 控制台: http://0.0.0.0:8081
+2026-07-06 10:46:01.796  INFO xiaozhi_manager: 静态资源: frontend/dist

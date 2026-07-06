@@ -14,7 +14,10 @@ use xiaozhi_core::Result;
 use xiaozhi_history::{HistoryClient, HistoryMessageInput};
 use xiaozhi_llm::{create_llm, ToolInfo};
 use xiaozhi_memory::create_memory;
-use xiaozhi_mcp::{McpManager, McpRequest, prepare_tools_for_llm};
+use xiaozhi_mcp::{
+    prepare_tools_for_llm, BUILTIN_MCP_SERVER, DEVICE_MCP_SERVER, McpManager, McpRequest,
+    McpToolEntry,
+};
 use xiaozhi_openclaw::OpenClawManager;
 use xiaozhi_rag::KnowledgeClient;
 use xiaozhi_speaker::create_speaker;
@@ -31,6 +34,7 @@ use crate::knowledge::{
     collect_searchable_kb_ids, default_knowledge_search_threshold, format_knowledge_hits_for_llm,
     has_available_knowledge_bases,
 };
+use crate::mcp_tools::parse_mcp_service_names;
 use crate::chat_queue::{ChatTextJob, ChatTextQueue};
 use crate::endpoint_hub::{EndpointHub, EndpointKind, EndpointRegistration, TtsAudioRoute};
 use crate::llm_manager::{LlmManager, LlmTurnResult};
@@ -629,26 +633,77 @@ impl ChatManager {
 
     pub async fn collect_llm_tools(&self) -> Vec<ToolInfo> {
         let bases = self.device_knowledge_bases().await;
-        self.collect_llm_tools_for_bases(&bases).await
+        let mcp_service_names = self
+            .session
+            .lock()
+            .await
+            .as_ref()
+            .map(|s| s.state().device_config.mcp_service_names.clone())
+            .unwrap_or_default();
+        self.collect_llm_tools_for_bases(&bases, &mcp_service_names)
+            .await
     }
 
-    /// 在已持有 `session` 锁时调用，避免 `collect_llm_tools` 内再次 `session.lock` 死锁。
+    /// 在已持有 `session` 锁时调用：`mcp_service_names` 由调用方从 session 状态传入，内部不再 `session.lock`。
     pub async fn collect_llm_tools_for_bases(
         &self,
         knowledge_bases: &[xiaozhi_config::user::KnowledgeBaseRef],
+        mcp_service_names: &str,
     ) -> Vec<ToolInfo> {
-        let mut raw = self.mcp_manager.list_all_tools().await;
+        let allowed_servers = parse_mcp_service_names(mcp_service_names);
+
+        let mut entries = self.mcp_manager.list_all_tool_entries().await;
         let known_names: std::collections::HashSet<_> =
-            raw.iter().map(|t| t.name.clone()).collect();
+            entries.iter().map(|t| t.name.clone()).collect();
 
         let device_mcp = self.device_mcp.lock().await;
         for t in device_mcp.device_tools() {
             if known_names.contains(&t.name) {
                 continue;
             }
-            raw.push(t.clone());
+            entries.push(McpToolEntry {
+                name: t.name.clone(),
+                description: t.description.clone(),
+                input_schema: t.input_schema.clone(),
+                server_name: DEVICE_MCP_SERVER.to_string(),
+            });
         }
         drop(device_mcp);
+
+        if !allowed_servers.is_empty() {
+            let before = entries.len();
+            entries.retain(|e| {
+                e.server_name == BUILTIN_MCP_SERVER
+                    || e.server_name == DEVICE_MCP_SERVER
+                    || allowed_servers.contains(e.server_name.as_str())
+            });
+            tracing::info!(
+                device_id = %self.device_id,
+                allowed_servers = ?allowed_servers,
+                before,
+                after = entries.len(),
+                "已按智能体 MCP 服务范围过滤工具"
+            );
+            let has_global = entries.iter().any(|e| {
+                e.server_name != BUILTIN_MCP_SERVER && e.server_name != DEVICE_MCP_SERVER
+            });
+            if !has_global {
+                tracing::warn!(
+                    device_id = %self.device_id,
+                    allowed_servers = ?allowed_servers,
+                    "智能体绑定的 MCP 服务当前无可用工具，请确认服务已启用且 xiaozhi-server 已同步连接"
+                );
+            }
+        }
+
+        let raw: Vec<xiaozhi_mcp::McpTool> = entries
+            .into_iter()
+            .map(|e| xiaozhi_mcp::McpTool {
+                name: e.name,
+                description: e.description,
+                input_schema: e.input_schema,
+            })
+            .collect();
 
         let (normalized, aliases) = prepare_tools_for_llm(raw);
         *self.llm_tool_aliases.lock().await = aliases;
@@ -671,6 +726,25 @@ impl ChatManager {
                     "未关联可用知识库，已从 LLM 工具列表移除 search_knowledge"
                 );
             }
+        }
+
+        if tools.is_empty() {
+            tracing::warn!(
+                device_id = %self.device_id,
+                mcp_service_names = %mcp_service_names,
+                "LLM 工具列表为空，对话将不会触发 MCP 调用"
+            );
+        } else {
+            tracing::info!(
+                device_id = %self.device_id,
+                tool_count = tools.len(),
+                mcp_scope = if allowed_servers.is_empty() {
+                    "全部已启用服务".to_string()
+                } else {
+                    format!("{allowed_servers:?}")
+                },
+                "LLM 工具列表已准备"
+            );
         }
 
         tools
@@ -1243,13 +1317,15 @@ impl ChatManager {
             .await
             .map(|t| t.is_tts_active())
             .unwrap_or(false);
-        let (listen_phase, session_active) = {
-            let guard = self.session.lock().await;
-            if let Some(session) = guard.as_ref() {
-                (session.state().listen_phase, true)
-            } else {
-                (ListenPhase::Idle, false)
+        let (listen_phase, session_active) = match self.session.try_lock() {
+            Ok(guard) => {
+                if let Some(session) = guard.as_ref() {
+                    (session.state().listen_phase, true)
+                } else {
+                    (ListenPhase::Idle, false)
+                }
             }
+            Err(_) => (ListenPhase::Idle, true),
         };
         let listen_phase = match listen_phase {
             ListenPhase::Idle => "idle",
@@ -1315,6 +1391,41 @@ impl ChatManager {
 
     pub async fn record_outbound_server(&self, channel: &str, msg: &ServerMessage) {
         self.signal_log.record_server_message(channel, msg).await;
+    }
+
+    pub async fn record_mcp_tool_debug(
+        &self,
+        name: &str,
+        invoke_name: &str,
+        tool_call_id: &str,
+        arguments: &serde_json::Value,
+    ) {
+        self.signal_log
+            .record_mcp_tool_call(name, invoke_name, tool_call_id, arguments)
+            .await;
+    }
+
+    pub async fn record_mcp_tool_result_debug(
+        &self,
+        name: &str,
+        invoke_name: &str,
+        tool_call_id: &str,
+        result_text: &str,
+        raw: Option<&serde_json::Value>,
+        stop_llm: bool,
+        ok: bool,
+    ) {
+        self.signal_log
+            .record_mcp_tool_result(
+                name,
+                invoke_name,
+                tool_call_id,
+                result_text,
+                raw,
+                stop_llm,
+                ok,
+            )
+            .await;
     }
 
     pub async fn signal_log_since(&self, after_id: u64) -> Vec<crate::signal_log::SignalEntry> {
@@ -1548,11 +1659,26 @@ impl ChatManager {
         self: &Arc<Self>,
         name: &str,
         arguments: serde_json::Value,
+        tool_call_id: &str,
     ) -> McpToolLlmOutcome {
         let invoke_name = self.resolve_tool_invoke_name(name).await;
+        self.record_mcp_tool_debug(name, &invoke_name, tool_call_id, &arguments)
+            .await;
+
         if !self.mcp_manager.is_local_tool_enabled(&invoke_name) {
+            let text = format!("本地工具已禁用: {invoke_name}");
+            self.record_mcp_tool_result_debug(
+                name,
+                &invoke_name,
+                tool_call_id,
+                &text,
+                None,
+                false,
+                false,
+            )
+            .await;
             return McpToolLlmOutcome {
-                text: format!("本地工具已禁用: {invoke_name}"),
+                text,
                 stop_llm: false,
             };
         }
@@ -1562,23 +1688,61 @@ impl ChatManager {
             .await
         {
             if let Some(handled) = self.try_play_tool_result_media(&invoke_name, &raw).await {
+                let text = if handled {
+                    "执行成功".to_string()
+                } else {
+                    "执行失败".to_string()
+                };
+                self.record_mcp_tool_result_debug(
+                    name,
+                    &invoke_name,
+                    tool_call_id,
+                    &text,
+                    Some(&raw),
+                    handled,
+                    handled,
+                )
+                .await;
                 return McpToolLlmOutcome {
-                    text: if handled {
-                        "执行成功".to_string()
-                    } else {
-                        "执行失败".to_string()
-                    },
+                    text,
                     stop_llm: handled,
                 };
             }
+            let text = crate::mcp_tool_media::tool_result_display_text(&raw);
+            self.record_mcp_tool_result_debug(
+                name,
+                &invoke_name,
+                tool_call_id,
+                &text,
+                Some(&raw),
+                false,
+                true,
+            )
+            .await;
             return McpToolLlmOutcome {
-                text: crate::mcp_tool_media::tool_result_display_text(&raw),
+                text,
                 stop_llm: false,
             };
         }
 
+        let text = self.execute_tool(name, arguments).await;
+        let ok = !text.starts_with("工具调用失败")
+            && !text.starts_with("本地工具已禁用")
+            && !text.starts_with("切换角色失败")
+            && !text.starts_with("恢复默认角色失败")
+            && !text.starts_with("清空历史失败");
+        self.record_mcp_tool_result_debug(
+            name,
+            &invoke_name,
+            tool_call_id,
+            &text,
+            None,
+            false,
+            ok,
+        )
+        .await;
         McpToolLlmOutcome {
-            text: self.execute_tool(name, arguments).await,
+            text,
             stop_llm: false,
         }
     }
@@ -1832,13 +1996,17 @@ impl ChatManager {
         Ok((true, 0))
     }
     async fn wait_session_closing_done(&self) -> Result<()> {
-        const MAX_WAIT_MS: u64 = 3000;
+        const MAX_WAIT_MS: u64 = 5000;
         let mut waited_ms = 0u64;
         while self.session_closing.load(Ordering::SeqCst) {
             if waited_ms >= MAX_WAIT_MS {
-                return Err(xiaozhi_core::Error::Session(
-                    "会话正在关闭，请稍后重试".into(),
-                ));
+                tracing::warn!(
+                    device_id = %self.device_id,
+                    waited_ms,
+                    "等待会话关闭完成超时，强制恢复"
+                );
+                self.force_recover_stuck_session_close("wait_timeout").await;
+                return Ok(());
             }
             tokio::time::sleep(Duration::from_millis(50)).await;
             waited_ms += 50;

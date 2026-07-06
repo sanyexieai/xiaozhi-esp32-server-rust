@@ -7,6 +7,7 @@ pub mod detect;
 pub mod device_mcp;
 pub mod endpoint_hub;
 pub mod knowledge;
+pub mod mcp_tools;
 pub mod llm_manager;
 pub mod llm_types;
 pub mod manager;

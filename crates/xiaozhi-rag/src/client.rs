@@ -30,7 +30,7 @@ impl KnowledgeClient {
         }
         let url = format!(
             "{}/api/internal/knowledge/search",
-            self.base_url.trim_end_matches('/')
+            xiaozhi_config::resolve_manager_backend_url(&self.base_url).trim_end_matches('/')
         );
         let resp = self
             .client

@@ -134,7 +134,7 @@ pub struct DeviceSignalsQuery {
     pub clear: bool,
 }
 
-async fn fetch_device_signals(
+pub(crate) async fn fetch_device_signals(
     state: &AppState,
     device_id: &str,
     after_id: u64,

@@ -7,7 +7,7 @@ use dashmap::DashMap;
 use reqwest::Client;
 use serde_json::Value;
 use xiaozhi_config::user::{ActivationPayload, UConfig};
-use xiaozhi_config::AppConfig;
+use xiaozhi_config::{resolve_manager_backend_url, AppConfig};
 use xiaozhi_core::Result;
 
 use crate::traits::{EventHandler, UserConfigProvider, WsDeviceEventNotifier};
@@ -62,6 +62,10 @@ impl ManagerConfigProvider {
             ws_notifier: RwLock::new(None),
         }
     }
+
+    fn resolved_backend_url(&self) -> String {
+        resolve_manager_backend_url(&self.backend_url)
+    }
 }
 
 #[async_trait]
@@ -69,7 +73,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn is_device_activated(&self, device_id: &str, client_id: &str) -> Result<bool> {
         let url = format!(
             "{}/api/internal/device/activated?device_id={}&client_id={}",
-            self.backend_url.trim_end_matches('/'),
+            self.resolved_backend_url().trim_end_matches('/'),
             device_id,
             client_id
         );
@@ -96,7 +100,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     ) -> Result<(String, String, String, i32)> {
         let url = format!(
             "{}/api/internal/device/activation?device_id={}&client_id={}",
-            self.backend_url.trim_end_matches('/'),
+            self.resolved_backend_url().trim_end_matches('/'),
             device_id,
             client_id
         );
@@ -139,7 +143,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     ) -> Result<bool> {
         let url = format!(
             "{}/api/internal/device/activate",
-            self.backend_url.trim_end_matches('/')
+            self.resolved_backend_url().trim_end_matches('/')
         );
         let resp = self
             .client
@@ -160,7 +164,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn get_user_config(&self, device_id: &str) -> Result<UConfig> {
         let url = format!(
             "{}/api/internal/configs/{}",
-            self.backend_url.trim_end_matches('/'),
+            self.resolved_backend_url().trim_end_matches('/'),
             device_id
         );
         let resp = self
@@ -215,7 +219,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn switch_device_role_by_name(&self, device_id: &str, role_name: &str) -> Result<String> {
         let url = format!(
             "{}/api/internal/device/{}/role",
-            self.backend_url.trim_end_matches('/'),
+            self.resolved_backend_url().trim_end_matches('/'),
             device_id
         );
         let resp = self
@@ -234,7 +238,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn restore_device_default_role(&self, device_id: &str) -> Result<()> {
         let url = format!(
             "{}/api/internal/device/{}/role/default",
-            self.backend_url.trim_end_matches('/'),
+            self.resolved_backend_url().trim_end_matches('/'),
             device_id
         );
         let _ = self
@@ -249,7 +253,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn get_system_config(&self) -> Result<String> {
         let url = format!(
             "{}/api/internal/system/configs",
-            self.backend_url.trim_end_matches('/')
+            self.resolved_backend_url().trim_end_matches('/')
         );
         let resp = self
             .client
@@ -265,7 +269,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn touch_device_activity(&self, device_id: &str) -> Result<()> {
         let url = format!(
             "{}/api/internal/device/touch",
-            self.backend_url.trim_end_matches('/')
+            self.resolved_backend_url().trim_end_matches('/')
         );
         let resp = self
             .client
@@ -290,7 +294,7 @@ impl UserConfigProvider for ManagerConfigProvider {
     async fn report_device_presence(&self, device_id: &str, online: bool) -> Result<()> {
         let url = format!(
             "{}/api/internal/device/presence",
-            self.backend_url.trim_end_matches('/')
+            self.resolved_backend_url().trim_end_matches('/')
         );
         let resp = self
             .client

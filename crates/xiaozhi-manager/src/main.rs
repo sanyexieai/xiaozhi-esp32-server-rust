@@ -29,7 +29,6 @@ mod voice_options;
 mod weknora_models;
 mod ws;
 
-use std::net::SocketAddr;
 use std::path::PathBuf;
 
 use clap::Parser;
@@ -40,8 +39,8 @@ struct Args {
     #[arg(short, long, default_value = "config/config.yaml")]
     config: PathBuf,
 
-    #[arg(long, default_value = "8080")]
-    port: u16,
+    #[arg(long)]
+    port: Option<u16>,
 
     #[arg(long, default_value = "data/manager.db")]
     db: PathBuf,
@@ -90,6 +89,35 @@ async fn main() -> anyhow::Result<()> {
 
     let _logging = xiaozhi_logging::init(log_opts)?;
 
+    let listen_port = args.port.unwrap_or_else(|| {
+        xiaozhi_config::backend_url_port(&app_config.manager.backend_url)
+            .unwrap_or(xiaozhi_config::DEFAULT_MANAGER_PORT)
+    });
+    let force_port = args.port.is_some();
+
+    let (listener, addr) =
+        network::bind_tcp_listener("0.0.0.0", listen_port, force_port).await?;
+    let browse_url = if addr.ip().is_unspecified() {
+        format!("http://127.0.0.1:{}", addr.port())
+    } else {
+        format!("http://{addr}")
+    };
+    tracing::info!("Manager 控制台: {browse_url} （监听 {addr}）");
+
+    let endpoint_path = args
+        .db
+        .parent()
+        .map(|p| p.join("manager.endpoint"))
+        .unwrap_or_else(|| PathBuf::from("data/manager.endpoint"));
+    let backend_url = format!("http://127.0.0.1:{}", addr.port());
+    match xiaozhi_config::write_manager_endpoint(&endpoint_path, &backend_url) {
+        Ok(()) => tracing::info!(
+            "Manager 端点已写入 {} ({backend_url})，xiaozhi-server 将自动发现",
+            endpoint_path.display()
+        ),
+        Err(e) => tracing::warn!("写入 Manager 端点文件失败: {e:#}"),
+    }
+
     if let Some(parent) = args.db.parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -107,9 +135,6 @@ async fn main() -> anyhow::Result<()> {
 
     let state = app::AppState::new(app_config, &args.config, &args.db, &static_dir)?;
     let router = app::build_router(state);
-
-    let addr = SocketAddr::from(([0, 0, 0, 0], args.port));
-    tracing::info!("Manager 控制台: http://{addr}");
     if static_dir.join("index.html").exists() {
         tracing::info!("静态资源: {}", static_dir.display());
     } else {
@@ -118,7 +143,6 @@ async fn main() -> anyhow::Result<()> {
         );
     }
 
-    let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, router).await?;
     Ok(())
 }

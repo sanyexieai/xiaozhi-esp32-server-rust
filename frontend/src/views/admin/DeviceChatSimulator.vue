@@ -164,6 +164,7 @@
               <el-tag size="small" type="success">TTS 播放</el-tag>
               <el-tag size="small" type="info">语音上行（预留）</el-tag>
               <el-tag size="small" type="info">多模态（预留）</el-tag>
+              <el-tag size="small" type="warning">后台流水</el-tag>
               <el-tag size="small" type="info">MCP Skill（预留）</el-tag>
             </div>
 
@@ -276,6 +277,64 @@
               />
             </el-tab-pane>
 
+            <el-tab-pane label="后台流水" name="backend">
+              <div class="backend-log-header">
+                <span class="section-title">服务端处理流水（含 MCP 工具调用）</span>
+                <el-button
+                  size="small"
+                  text
+                  :disabled="!canPollBackendSignals"
+                  @click="handleClearBackendLog"
+                >
+                  清空
+                </el-button>
+              </div>
+              <el-alert
+                v-if="isConnected && !canPollBackendSignals"
+                type="warning"
+                :closable="false"
+                show-icon
+                class="error-alert"
+                title="无法拉取后台流水：请先选择或填写设备 ID"
+              />
+              <el-alert
+                v-else-if="isConnected && backendPollingActive"
+                type="info"
+                :closable="false"
+                show-icon
+                class="error-alert"
+                title="已连接并轮询服务端流水；MCP 调用会同步显示在「文本对话」与下方列表"
+              />
+              <div v-if="!canPollBackendSignals" class="empty-transcript">
+                <el-empty description="请选择设备并连接后开始记录后台流水" />
+              </div>
+              <div v-else-if="signalLog.length === 0" class="empty-transcript">
+                <el-empty description="发送会触发 MCP 的对话（如查天气）后，这里会显示 mcp_tool_call / mcp_tool_result" />
+              </div>
+              <div v-else ref="backendLogRef" class="backend-log">
+                <div
+                  v-for="item in signalLog"
+                  :key="item.id"
+                  class="backend-item"
+                  :class="backendItemClass(item)"
+                >
+                  <div class="backend-head">
+                    <el-tag size="small" :type="backendDirectionTag(item)">
+                      {{ backendDirectionLabel(item) }}
+                    </el-tag>
+                    <el-tag size="small" type="info">{{ backendChannelLabel(item.channel) }}</el-tag>
+                    <el-tag size="small" effect="plain">{{ item.msg_type }}</el-tag>
+                    <span class="backend-ts">{{ formatSignalTs(item.ts_ms) }}</span>
+                  </div>
+                  <div class="backend-summary">{{ item.summary }}</div>
+                  <details v-if="item.payload" class="backend-detail">
+                    <summary>详情</summary>
+                    <pre>{{ formatJson(item.payload) }}</pre>
+                  </details>
+                </div>
+              </div>
+            </el-tab-pane>
+
             <el-tab-pane label="MCP Skill（预留）" name="mcp" lazy>
               <FeaturePlaceholder
                 title="MCP Skill 工具链"
@@ -303,6 +362,7 @@ import { Connection, Microphone, Picture } from '@element-plus/icons-vue'
 import api from '@/utils/api'
 import { isDeviceOnline } from '@/utils/deviceStatus'
 import { useDeviceChatSimulator } from '@/composables/useDeviceChatSimulator'
+import { useDeviceDebug } from '@/composables/useDeviceDebug'
 import FeaturePlaceholder from '@/components/admin/device-simulator/FeaturePlaceholder.vue'
 
 const {
@@ -323,8 +383,16 @@ const {
   sendAbort,
   sendGoodbye,
   clearTranscript,
-  setTtsEnabled
+  setTtsEnabled,
+  notifySystem
 } = useDeviceChatSimulator()
+
+const {
+  signalLog,
+  startSignalPolling,
+  stopSignalPolling,
+  clearSignals
+} = useDeviceDebug({ scope: 'admin' })
 
 const devices = ref([])
 const loadingDevices = ref(false)
@@ -336,6 +404,7 @@ const wsUrlOverride = ref('')
 const activeTab = ref('chat')
 const draft = ref('')
 const transcriptRef = ref(null)
+const backendLogRef = ref(null)
 const endpointStatus = ref(null)
 const pushText = ref('')
 const pushTarget = ref('hardware_first')
@@ -343,6 +412,9 @@ const pushSkipLlm = ref(false)
 const pushAutoListen = ref(false)
 const pushing = ref(false)
 let endpointPollTimer = null
+const backendPollingActive = ref(false)
+const mirroredBackendSignalIds = new Set()
+let pollingLogicalDeviceId = ''
 
 const selectedDeviceDbId = computed(() => {
   if (
@@ -356,6 +428,20 @@ const selectedDeviceDbId = computed(() => {
   )
   return device?.id || null
 })
+
+/** 后台流水轮询目标：优先 DB id，否则用 device_id 直连 server */
+const signalsPollTarget = computed(() => {
+  if (selectedDeviceDbId.value) {
+    return { deviceDbId: selectedDeviceDbId.value }
+  }
+  const deviceId = selectedDeviceId.value?.trim()
+  if (deviceId) {
+    return { deviceId }
+  }
+  return null
+})
+
+const canPollBackendSignals = computed(() => !!signalsPollTarget.value)
 
 const deviceOptions = computed(() => {
   const opts = [...devices.value]
@@ -418,13 +504,94 @@ function formatTime(ts) {
   return new Date(ts).toLocaleTimeString()
 }
 
+function formatSignalTs(tsMs) {
+  if (!tsMs) return ''
+  try {
+    return new Date(tsMs).toLocaleTimeString()
+  } catch {
+    return String(tsMs)
+  }
+}
+
+function formatJson(obj) {
+  try {
+    return JSON.stringify(obj, null, 2)
+  } catch {
+    return String(obj)
+  }
+}
+
+function backendChannelLabel(channel) {
+  const map = { mqtt: 'MQTT', ws: 'WebSocket', udp: 'UDP', llm: 'LLM' }
+  return map[channel] || channel || '?'
+}
+
+function backendDirectionLabel(item) {
+  if (item.direction === 'in') return '← 设备'
+  if (item.direction === 'internal') return '⚙ 后台'
+  return '→ 设备'
+}
+
+function backendDirectionTag(item) {
+  if (item.direction === 'in') return 'warning'
+  if (item.direction === 'internal') return 'danger'
+  return 'primary'
+}
+
+function backendItemClass(item) {
+  return {
+    'backend-in': item.direction === 'in',
+    'backend-out': item.direction === 'out',
+    'backend-internal': item.direction === 'internal',
+    'backend-mcp-call': item.msg_type === 'mcp_tool_call',
+    'backend-mcp-result': item.msg_type === 'mcp_tool_result'
+  }
+}
+
+async function handleClearBackendLog() {
+  if (!signalsPollTarget.value) return
+  try {
+    await clearSignals(signalsPollTarget.value)
+  } catch (e) {
+    ElMessage.error(e?.message || '清空后台流水失败')
+  }
+}
+
+function startBackendPolling({ reset = false } = {}) {
+  const target = signalsPollTarget.value
+  if (!target) {
+    backendPollingActive.value = false
+    pollingLogicalDeviceId = ''
+    return
+  }
+  const logicalId = selectedDeviceId.value?.trim() || ''
+  const sameDevice = backendPollingActive.value && logicalId && pollingLogicalDeviceId === logicalId
+  stopSignalPolling()
+  if (reset || !sameDevice) {
+    mirroredBackendSignalIds.clear()
+    void clearSignals(target)
+  }
+  startSignalPolling(target, 800)
+  backendPollingActive.value = true
+  pollingLogicalDeviceId = logicalId
+}
+
+function stopBackendPolling() {
+  stopSignalPolling()
+  backendPollingActive.value = false
+  pollingLogicalDeviceId = ''
+}
+
 async function loadEndpoints() {
   if (!selectedDeviceDbId.value) {
     endpointStatus.value = null
     return
   }
   try {
-    const res = await api.get(`/admin/devices/${selectedDeviceDbId.value}/endpoints`)
+    const res = await api.get(`/admin/devices/${selectedDeviceDbId.value}/endpoints`, {
+      timeout: 15000,
+      silentError: true
+    })
     endpointStatus.value = res.data?.data || null
   } catch {
     endpointStatus.value = null
@@ -451,11 +618,11 @@ function handleDeviceChange() {
 }
 
 async function handleInjectMessage() {
-  if (!selectedDeviceDbId.value || !pushText.value.trim()) return
+  if (!selectedDeviceId.value?.trim() || !pushText.value.trim()) return
   pushing.value = true
   try {
     const res = await api.post('/admin/devices/inject-message', {
-      device_id: selectedDeviceId.value,
+      device_id: selectedDeviceId.value.trim(),
       message: pushText.value.trim(),
       skip_llm: pushSkipLlm.value,
       auto_listen: pushAutoListen.value,
@@ -463,6 +630,9 @@ async function handleInjectMessage() {
     })
     if (res.data?.data?.success || res.data?.success) {
       ElMessage.success('消息已注入')
+      if (signalsPollTarget.value) {
+        startBackendPolling({ reset: false })
+      }
     } else {
       ElMessage.error(res.data?.data?.error || res.data?.error || '注入失败')
     }
@@ -534,6 +704,7 @@ async function handleConnect() {
     })
     ElMessage.success('已连接并完成 hello 握手')
     void loadEndpoints()
+    startBackendPolling({ reset: true })
   } catch (e) {
     ElMessage.error(e?.message || '连接失败')
   } finally {
@@ -543,6 +714,7 @@ async function handleConnect() {
 
 function handleDisconnect() {
   disconnect()
+  stopBackendPolling()
   void loadEndpoints()
   ElMessage.info('已断开连接')
 }
@@ -573,7 +745,43 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stopEndpointPolling()
+  stopBackendPolling()
   disconnect()
+})
+
+watch(activeTab, async (tab) => {
+  if (tab !== 'backend') return
+  if (isConnected.value && signalsPollTarget.value && !backendPollingActive.value) {
+    startBackendPolling({ reset: false })
+  }
+  await nextTick()
+  const el = backendLogRef.value
+  if (el) el.scrollTop = el.scrollHeight
+})
+
+watch(signalLog, async (log) => {
+  for (const item of log) {
+    if (!item?.id || mirroredBackendSignalIds.has(item.id)) continue
+    if (item.msg_type === 'mcp_tool_call' || item.msg_type === 'mcp_tool_result') {
+      mirroredBackendSignalIds.add(item.id)
+      const title = item.msg_type === 'mcp_tool_call' ? 'MCP 调用' : 'MCP 结果'
+      notifySystem(item.summary || item.msg_type, title)
+    }
+  }
+  if (activeTab.value !== 'backend') return
+  await nextTick()
+  const el = backendLogRef.value
+  if (el) el.scrollTop = el.scrollHeight
+}, { deep: true })
+
+watch([isConnected, signalsPollTarget], ([connected, target], [wasConnected]) => {
+  if (connected && target) {
+    const reset = !wasConnected
+    startBackendPolling({ reset })
+  } else if (!connected) {
+    stopBackendPolling()
+    mirroredBackendSignalIds.clear()
+  }
 })
 </script>
 
@@ -823,6 +1031,82 @@ onBeforeUnmount(() => {
 .composer-hint {
   font-size: 12px;
   color: var(--el-text-color-secondary);
+}
+
+.backend-log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.backend-log {
+  max-height: 520px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.backend-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--el-border-color-lighter);
+  background: #fff;
+}
+
+.backend-item.backend-in {
+  border-left: 3px solid var(--el-color-warning);
+}
+
+.backend-item.backend-out {
+  border-left: 3px solid var(--el-color-primary);
+}
+
+.backend-item.backend-internal,
+.backend-item.backend-mcp-call,
+.backend-item.backend-mcp-result {
+  border-left: 3px solid var(--el-color-danger);
+  background: var(--el-color-danger-light-9);
+}
+
+.backend-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.backend-ts {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.backend-summary {
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.backend-detail {
+  margin-top: 8px;
+}
+
+.backend-detail pre {
+  margin: 8px 0 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--el-fill-color-light);
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 @media (max-width: 992px) {

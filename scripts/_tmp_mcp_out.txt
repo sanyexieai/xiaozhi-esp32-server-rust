@@ -1,0 +1,31 @@
+﻿=== mcp MCP全局配置 enabled= 1
+  server: 活动 http://careclub.cn:3001/sse enabled= False
+  server: 听书 http://careclub.cn:3002/sse enabled= False
+  server: 问诊 http://careclub.cn:3003/sse enabled= False
+  server: 紧急通知 http://careclub.cn:3004/sse enabled= False
+  server: 理财 http://careclub.cn:3005/sse enabled= False
+  server: 外卖 http://localhost:3006/sse enabled= True
+  server: 保健品 http://careclub.cn:3007/sse enabled= False
+  server: 家政 http://careclub.cn:3008/sse enabled= False
+  server: 问诊 http://careclub.cn:3009/sse enabled= False
+  server: 用药提醒 http://careclub.cn:3010/sse enabled= False
+  server: 音乐 http://careclub.cn:3011/sse enabled= False
+  server: 短信 http://careclub.cn:3012/sse enabled= False
+  server: 打车 http://careclub.cn:3013/sse enabled= False
+  server: 旅游 http://careclub.cn:3014/sse enabled= False
+  server: 手表健康 http://careclub.cn:3015/sse enabled= False
+=== mcp_imported 麦当劳MCP Server enabled= 1
+  url: https://mcp.api-inference.modelscope.net/eed41f881dfc44/mcp service_id: MChina/mcd_mcp_server
+=== mcp_imported Fetch网页内容抓取 enabled= 1
+python : Traceback (most recent call last):
+所在位置 C:\Users\sanye\AppData\Local\Temp\ps-script-a4828a88-a95e-42b7-8201-cd71c99208e8.ps1:93 字符: 49
++ ... ozhi-esp32-server-rust; python scripts\_tmp_query_mcp.py 2>&1 | Out-F ...
++                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "D:\code\xiaozhi-esp32-server-rust\scripts\_tmp_query_mcp.py", line 30, in <module>
+    for row in db.execute("SELECT id, name, config FROM agents"):
+  url: https://mcp.api-inference.modelscope.net/4def3a86828149/mcp service_id: @modelcontextprotocol/fetch
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: config

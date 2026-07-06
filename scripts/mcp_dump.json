@@ -1,0 +1,256 @@
+{
+  "agents": [
+    {
+      "id": 1,
+      "name": "小菠萝",
+      "extra": {
+        "asr_speed": "normal",
+        "knowledge_base_ids": [],
+        "mcp_service_names": "Fetch网页内容抓取,麦当劳MCP Server",
+        "memory_mode": "short",
+        "nickname": "小菠萝",
+        "openclaw": {
+          "allowed": false,
+          "enter_keywords": [
+            "打开龙虾",
+            "进入龙虾"
+          ],
+          "exit_keywords": [
+            "关闭龙虾",
+            "退出龙虾"
+          ]
+        },
+        "speaker_chat_mode": "off",
+        "voice": "zh_female_cancan_mars_bigtts"
+      }
+    }
+  ],
+  "imported": [
+    {
+      "name": "麦当劳MCP Server",
+      "data": {
+        "allowed_tools": [],
+        "auth_required": true,
+        "headers": {
+          "Authorization": "Bearer ms-da1e885f-c776-4587-b099-e256d0d246ac"
+        },
+        "market_id": 14,
+        "provider_id": "modelscope",
+        "service_id": "MChina/mcd_mcp_server",
+        "service_name": "麦当劳MCP Server",
+        "source_url": "https://open.mcd.cn/mcp",
+        "transport": "streamablehttp",
+        "url": "https://mcp.api-inference.modelscope.net/eed41f881dfc44/mcp",
+        "url_hash": "c4278aa75b9ca1bccb7bb3631657e658677b527c5f6b6473e5717b3499f31770"
+      }
+    },
+    {
+      "name": "Fetch网页内容抓取",
+      "data": {
+        "allowed_tools": [],
+        "auth_required": false,
+        "headers": {
+          "Authorization": "Bearer ms-da1e885f-c776-4587-b099-e256d0d246ac"
+        },
+        "market_id": 14,
+        "provider_id": "modelscope",
+        "service_id": "@modelcontextprotocol/fetch",
+        "service_name": "Fetch网页内容抓取",
+        "source_url": "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+        "transport": "streamablehttp",
+        "url": "https://mcp.api-inference.modelscope.net/4def3a86828149/mcp",
+        "url_hash": "e3942d6d58cc566b5ba4fd6b4f693eba75c7c39a8ff2696d41898422d78e37ca"
+      }
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "活动",
+      "type": "sse",
+      "url": "http://careclub.cn:3001/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:25.279Z",
+      "probe_tool_count": 4
+    },
+    {
+      "name": "听书",
+      "type": "sse",
+      "url": "http://careclub.cn:3002/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:21:10.123Z",
+      "probe_tool_count": 16
+    },
+    {
+      "name": "问诊",
+      "type": "sse",
+      "url": "http://careclub.cn:3003/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:28.003Z",
+      "probe_tool_count": 11
+    },
+    {
+      "name": "紧急通知",
+      "type": "sse",
+      "url": "http://careclub.cn:3004/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:28.703Z",
+      "probe_tool_count": 8
+    },
+    {
+      "name": "理财",
+      "type": "sse",
+      "url": "http://careclub.cn:3005/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:29.374Z",
+      "probe_tool_count": 10
+    },
+    {
+      "name": "外卖",
+      "type": "sse",
+      "url": "http://localhost:3006/sse",
+      "enabled": true,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-06T03:17:32.456Z",
+      "probe_tool_count": 21
+    },
+    {
+      "name": "保健品",
+      "type": "sse",
+      "url": "http://careclub.cn:3007/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:31.120Z",
+      "probe_tool_count": 9
+    },
+    {
+      "name": "家政",
+      "type": "sse",
+      "url": "http://careclub.cn:3008/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:32.248Z",
+      "probe_tool_count": 10
+    },
+    {
+      "name": "问诊",
+      "type": "sse",
+      "url": "http://careclub.cn:3009/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:21:03.038Z",
+      "probe_tool_count": 8
+    },
+    {
+      "name": "用药提醒",
+      "type": "sse",
+      "url": "http://careclub.cn:3010/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:21:04.258Z",
+      "probe_tool_count": 9
+    },
+    {
+      "name": "音乐",
+      "type": "sse",
+      "url": "http://careclub.cn:3011/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:21:05.534Z",
+      "probe_tool_count": 16
+    },
+    {
+      "name": "短信",
+      "type": "sse",
+      "url": "http://careclub.cn:3012/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:36.042Z",
+      "probe_tool_count": 2
+    },
+    {
+      "name": "打车",
+      "type": "sse",
+      "url": "http://careclub.cn:3013/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:36.754Z",
+      "probe_tool_count": 10
+    },
+    {
+      "name": "旅游",
+      "type": "sse",
+      "url": "http://careclub.cn:3014/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:20:37.640Z",
+      "probe_tool_count": 11
+    },
+    {
+      "name": "手表健康",
+      "type": "sse",
+      "url": "http://careclub.cn:3015/sse",
+      "enabled": false,
+      "allowed_tools": [],
+      "probe_status": "ok",
+      "probe_fail_count": 0,
+      "probe_last_error": "",
+      "probe_last_at": "2026-07-03T03:21:18.660Z",
+      "probe_tool_count": 9
+    }
+  ],
+  "sim_devices": [
+    {
+      "id": 6,
+      "device_id": "web-sim-1",
+      "agent_id": null,
+      "name": "Web 模拟设备"
+    }
+  ]
+}

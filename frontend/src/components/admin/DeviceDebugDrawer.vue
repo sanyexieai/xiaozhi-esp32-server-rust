@@ -235,8 +235,8 @@
                     :class="signalItemClass(item)"
                   >
                     <div class="timeline-head">
-                      <el-tag size="small" :type="item.direction === 'in' ? 'warning' : 'primary'">
-                        {{ item.direction === 'in' ? '← 设备' : '→ 设备' }}
+                      <el-tag size="small" :type="item.direction === 'in' ? 'warning' : item.direction === 'internal' ? 'danger' : 'primary'">
+                        {{ item.direction === 'in' ? '← 设备' : item.direction === 'internal' ? '⚙ 后台' : '→ 设备' }}
                       </el-tag>
                       <el-tag size="small" type="info">{{ channelLabel(item.channel) }}</el-tag>
                       <el-tag size="small" effect="plain">{{ item.msg_type }}</el-tag>
@@ -454,7 +454,7 @@ function formatSignalTs(tsMs) {
 }
 
 function channelLabel(channel) {
-  const map = { mqtt: 'MQTT', ws: 'WebSocket', udp: 'UDP' }
+  const map = { mqtt: 'MQTT', ws: 'WebSocket', udp: 'UDP', llm: 'LLM' }
   return map[channel] || channel || '?'
 }
 
@@ -462,7 +462,10 @@ function signalItemClass(item) {
   return {
     'signal-in': item.direction === 'in',
     'signal-out': item.direction === 'out',
-    'signal-audio': item.msg_type === 'audio'
+    'signal-internal': item.direction === 'internal',
+    'signal-audio': item.msg_type === 'audio',
+    'signal-mcp-call': item.msg_type === 'mcp_tool_call',
+    'signal-mcp-result': item.msg_type === 'mcp_tool_result'
   }
 }
 
@@ -792,6 +795,13 @@ function handleClosed() {
 .signal-item.signal-audio {
   border-left-color: #94a3b8;
   opacity: 0.92;
+}
+
+.signal-item.signal-internal,
+.signal-item.signal-mcp-call,
+.signal-item.signal-mcp-result {
+  border-left-color: #ef4444;
+  background: #fef2f2;
 }
 
 .log-empty {

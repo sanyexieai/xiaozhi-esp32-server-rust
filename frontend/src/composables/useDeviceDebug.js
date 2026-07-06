@@ -197,7 +197,7 @@ export function useDeviceDebug(options = {}) {
   async function refreshStatus(deviceDbId) {
     const path = `${apiPrefix}/${deviceDbId}/endpoints`
     return runStep('status', 'manager', async () => {
-      const res = await api.get(path)
+      const res = await api.get(path, { timeout: 15000, silentError: true })
       const data = res.data?.data || {}
       endpointStatus.value = data
       const hw = data.has_hardware ? '硬件在线' : '硬件离线'
@@ -354,6 +354,40 @@ export function useDeviceDebug(options = {}) {
   let lastSignalId = 0
   let signalPollTimer = null
 
+  function normalizeSignalsTarget(target) {
+    if (target == null || target === '') return null
+    if (typeof target === 'number' || (typeof target === 'string' && /^\d+$/.test(target))) {
+      return { mode: 'db', deviceDbId: Number(target) }
+    }
+    if (typeof target === 'object') {
+      if (target.deviceDbId != null && target.deviceDbId !== '') {
+        return { mode: 'db', deviceDbId: Number(target.deviceDbId) }
+      }
+      const deviceId = target.deviceId?.trim?.() || ''
+      if (deviceId) {
+        return { mode: 'device', deviceId }
+      }
+    }
+    return null
+  }
+
+  function signalsRequest(resolved, { clear = false } = {}) {
+    const params = clear ? { clear: true } : { after_id: lastSignalId }
+    if (resolved.mode === 'db') {
+      return {
+        path: `${apiPrefix}/${resolved.deviceDbId}/signals`,
+        params
+      }
+    }
+    if (scope === 'admin') {
+      return {
+        path: '/admin/device-simulator/signals',
+        params: { device_id: resolved.deviceId, ...params }
+      }
+    }
+    return null
+  }
+
   function appendSignals(entries) {
     if (!Array.isArray(entries) || entries.length === 0) return
     for (const row of entries) {
@@ -367,10 +401,12 @@ export function useDeviceDebug(options = {}) {
     }
   }
 
-  async function fetchSignals(deviceDbId, { clear = false } = {}) {
-    const params = clear ? { clear: true } : { after_id: lastSignalId }
-    const path = `${apiPrefix}/${deviceDbId}/signals`
-    const res = await api.get(path, { params, timeout: 10000 })
+  async function fetchSignals(target, { clear = false } = {}) {
+    const resolved = normalizeSignalsTarget(target)
+    if (!resolved) return { signals: [] }
+    const req = signalsRequest(resolved, { clear })
+    if (!req) return { signals: [] }
+    const res = await api.get(req.path, { params: req.params, timeout: 10000 })
     const data = res.data?.data || {}
     if (clear) {
       signalLog.value = []
@@ -380,12 +416,13 @@ export function useDeviceDebug(options = {}) {
     return data
   }
 
-  function startSignalPolling(deviceDbId, intervalMs = 1000) {
+  function startSignalPolling(target, intervalMs = 1000) {
     stopSignalPolling()
-    if (!deviceDbId) return
+    const resolved = normalizeSignalsTarget(target)
+    if (!resolved) return
     const tick = async () => {
       try {
-        await fetchSignals(deviceDbId)
+        await fetchSignals(resolved)
       } catch {
         /* 轮询失败不打断调试 */
       }
@@ -406,10 +443,11 @@ export function useDeviceDebug(options = {}) {
     lastSignalId = 0
   }
 
-  async function clearSignals(deviceDbId) {
+  async function clearSignals(target) {
     clearSignalLogLocal()
-    if (deviceDbId) {
-      await fetchSignals(deviceDbId, { clear: true })
+    const resolved = normalizeSignalsTarget(target)
+    if (resolved) {
+      await fetchSignals(resolved, { clear: true })
     }
   }
 

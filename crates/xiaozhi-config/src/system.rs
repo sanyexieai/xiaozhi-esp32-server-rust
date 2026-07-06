@@ -279,7 +279,7 @@ impl Default for ManagerConfig {
 }
 
 fn default_backend_url() -> String {
-    "http://127.0.0.1:8080".to_string()
+    format!("http://127.0.0.1:{}", crate::DEFAULT_MANAGER_PORT)
 }
 fn default_auth_token() -> String {
     "xiaozhi_admin_secret_key".to_string()

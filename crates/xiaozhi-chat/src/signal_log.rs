@@ -81,6 +81,62 @@ impl SignalLog {
             .await;
     }
 
+    /// LLM 回合内 MCP 工具调用（仅调试流水，不下发设备）。
+    pub async fn record_mcp_tool_call(
+        &self,
+        name: &str,
+        invoke_name: &str,
+        tool_call_id: &str,
+        arguments: &Value,
+    ) {
+        let summary = if name == invoke_name {
+            format!("调用 MCP · {invoke_name}")
+        } else {
+            format!("调用 MCP · {invoke_name} (LLM: {name})")
+        };
+        let payload = Some(json!({
+            "tool": name,
+            "invoke_name": invoke_name,
+            "tool_call_id": tool_call_id,
+            "arguments": arguments,
+        }));
+        self.push("internal", "llm", "mcp_tool_call", &summary, payload)
+            .await;
+    }
+
+    /// LLM 回合内 MCP 工具返回结果。
+    pub async fn record_mcp_tool_result(
+        &self,
+        name: &str,
+        invoke_name: &str,
+        tool_call_id: &str,
+        result_text: &str,
+        raw: Option<&Value>,
+        stop_llm: bool,
+        ok: bool,
+    ) {
+        let status = if ok { "成功" } else { "失败" };
+        let summary = if stop_llm {
+            format!("MCP 结果 · {invoke_name} · {status} · 终止 LLM 回合")
+        } else {
+            format!(
+                "MCP 结果 · {invoke_name} · {status} · {}",
+                truncate_text(result_text, 64)
+            )
+        };
+        let payload = Some(json!({
+            "tool": name,
+            "invoke_name": invoke_name,
+            "tool_call_id": tool_call_id,
+            "ok": ok,
+            "stop_llm": stop_llm,
+            "result": result_text,
+            "raw": raw,
+        }));
+        self.push("internal", "llm", "mcp_tool_result", &summary, payload)
+            .await;
+    }
+
     /// 音频帧：同方向/通道连续帧合并为一条，避免刷屏
     pub async fn record_audio(&self, direction: &str, channel: &str, bytes: usize) {
         let mut guard = self.entries.lock().await;
@@ -292,6 +348,33 @@ fn truncate_text(s: &str, max: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn mcp_tool_events_recorded() {
+        let log = SignalLog::new();
+        log.record_mcp_tool_call(
+            "weather",
+            "global_weather",
+            "call_1",
+            &json!({"city": "北京"}),
+        )
+        .await;
+        log.record_mcp_tool_result(
+            "weather",
+            "global_weather",
+            "call_1",
+            "晴，25°C",
+            None,
+            false,
+            true,
+        )
+        .await;
+        let items = log.list_since(0).await;
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[0].msg_type, "mcp_tool_call");
+        assert_eq!(items[0].direction, "internal");
+        assert_eq!(items[1].msg_type, "mcp_tool_result");
+    }
 
     #[tokio::test]
     async fn audio_entries_merge() {

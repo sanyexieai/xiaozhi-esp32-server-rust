@@ -1117,8 +1117,10 @@ impl ChatSession {
         }
 
         let knowledge_bases = self.state.device_config.knowledge_bases.clone();
+        let mcp_service_names = self.state.device_config.mcp_service_names.clone();
         let tools: Vec<ToolInfo> = if let Some(mgr) = self.manager.upgrade() {
-            mgr.collect_llm_tools_for_bases(&knowledge_bases).await
+            mgr.collect_llm_tools_for_bases(&knowledge_bases, &mcp_service_names)
+                .await
         } else {
             self.mcp_manager
                 .list_local_tools()
@@ -1130,6 +1132,10 @@ impl ChatSession {
                 })
                 .collect()
         };
+
+        if let Some(hint) = crate::mcp_tools::build_mcp_system_hint(&tools) {
+            dialogue.insert(1, ChatMessage::system(hint));
+        }
 
         Ok((dialogue, tools))
     }

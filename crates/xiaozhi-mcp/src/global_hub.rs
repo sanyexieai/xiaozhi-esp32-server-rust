@@ -183,6 +183,19 @@ impl GlobalMcpHub {
 
             match result {
                 Ok(()) => tracing::debug!("全局 MCP {} 连接结束，将重连", server.name),
+                Err(e) if is_expired_mcp_url_error(&e) => {
+                    tracing::warn!(
+                        "全局 MCP {} 地址已过期，停止后台重试: {e}",
+                        server.name
+                    );
+                    break;
+                }
+                Err(e) if is_transient_sse_error(&e) && self.has_server_tools(&server.name) => {
+                    tracing::debug!(
+                        "全局 MCP {} SSE 临时断开，保留已同步工具并等待下轮重连: {e}",
+                        server.name
+                    );
+                }
                 Err(e) => tracing::warn!("全局 MCP {} 异常: {e}", server.name),
             }
             if self.shutdown.load(Ordering::Relaxed) {
@@ -328,6 +341,12 @@ impl GlobalMcpHub {
             .count()
     }
 
+    fn has_server_tools(&self, server_name: &str) -> bool {
+        self.bindings
+            .iter()
+            .any(|entry| entry.value().server_name == server_name)
+    }
+
     async fn fetch_tools_rpc(
         &self,
         url: &str,
@@ -451,6 +470,14 @@ pub(crate) fn normalize_transport(kind: &str, url: &str) -> String {
         _ if url.ends_with("/mcp") || url.contains("/mcp?") => "http".to_string(),
         _ => "http".to_string(),
     }
+}
+
+fn is_expired_mcp_url_error(err: &str) -> bool {
+    err.contains("HTTP 410 Gone") || err.contains("Url is expired")
+}
+
+fn is_transient_sse_error(err: &str) -> bool {
+    err.contains("SSE 响应通道关闭") || err.contains("SSE 请求超时")
 }
 
 pub(crate) fn parse_tools_list(result: Option<&Value>) -> Vec<McpTool> {
