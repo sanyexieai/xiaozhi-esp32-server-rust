@@ -2017,6 +2017,7 @@ impl ChatManager {
     pub async fn init_session(self: Arc<Self>, session_id: String) -> Result<()> {
         self.wait_session_closing_done().await?;
         if self.session.lock().await.is_some() {
+            self.mark_hello_ready();
             self.clone().spawn_audio_idle_watchdog().await;
             self.media_player.attach_session(Arc::clone(&self)).await;
             return Ok(());

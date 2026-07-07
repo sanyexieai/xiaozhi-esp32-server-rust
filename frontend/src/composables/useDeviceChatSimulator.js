@@ -389,12 +389,11 @@ export function useDeviceChatSimulator(options = {}) {
 
       socket = new WebSocket(url)
 
-      socket.onopen = async () => {
+      socket.onopen = () => {
         connectionState.value = 'connected'
         if (!quietConnect) {
           pushSystem('已通过管理台代理连接 xiaozhi-server', '已连接')
         }
-        await ensureTtsPlayer().ensureReady()
         const features = { ...helloFeatures }
         const resume = String(resumeSessionId || '').trim()
         if (resume) {
@@ -402,7 +401,14 @@ export function useDeviceChatSimulator(options = {}) {
         }
         const hello = buildHelloMessage(pv, features)
         socket.send(JSON.stringify(hello))
-        helloTimer = setTimeout(finish, 8000)
+        void ensureTtsPlayer().ensureReady()
+        helloTimer = setTimeout(() => {
+          fail(
+            new Error(
+              '等待服务端 hello 响应超时，请确认 xiaozhi-server 已启动（默认 ws://127.0.0.1:8989/xiaozhi/v1/）'
+            )
+          )
+        }, 15000)
       }
 
       socket.onmessage = (event) => {

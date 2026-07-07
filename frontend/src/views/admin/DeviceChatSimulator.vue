@@ -82,8 +82,12 @@
                 placeholder="留空则使用 OTA 配置中的地址"
                 clearable
               />
-              <div v-if="simulatorConfig?.ws_url" class="field-help">
-                默认：{{ simulatorConfig.ws_url }}
+              <div v-if="simulatorConfig?.local_ws_url" class="field-help">
+                本机调试推荐：{{ simulatorConfig.local_ws_url }}
+                <el-tag size="small" type="success">默认</el-tag>
+              </div>
+              <div v-else-if="simulatorConfig?.ws_url" class="field-help">
+                OTA 默认：{{ simulatorConfig.ws_url }}
                 <el-tag size="small" type="info">{{ simulatorConfig.env }}</el-tag>
               </div>
             </el-form-item>
@@ -684,6 +688,9 @@ async function reloadAll() {
     const defaultSimId = simulatorConfig.value?.default_sim_device_id
     if (defaultSimId && !selectedDeviceId.value) {
       selectedDeviceId.value = defaultSimId
+    }
+    if (!wsUrlOverride.value && simulatorConfig.value?.local_ws_url) {
+      wsUrlOverride.value = simulatorConfig.value.local_ws_url
     }
     await loadEndpoints()
     startEndpointPolling()

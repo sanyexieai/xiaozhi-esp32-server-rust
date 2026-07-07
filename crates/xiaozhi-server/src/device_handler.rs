@@ -156,47 +156,47 @@ pub async fn process_client_message(
                     nonce: hex::encode(udp.nonce),
                 });
             }
-            chat_mgr.prepare_session(session_id.clone()).await;
+            responses.push(hello);
 
-            // 对齐 Go `ensureSessionForHello`：先完成会话 bootstrap，再下发 hello 响应，
-            // 避免设备收到 hello 后立即 listen/detect 时会话尚未就绪。
+            // 先回 hello，再在后台 bootstrap 会话，避免 init_session 阻塞导致模拟器握手超时。
             let mgr = chat_mgr.clone();
             let features = msg.features.clone();
             let resume_for_restore = resume_session_id.clone();
-            match mgr.clone().init_session(session_id.clone()).await {
-                Ok(()) => {
-                    if has_mcp_feature(&features) {
-                        mgr.schedule_mcp_init(session_id.clone(), features);
+            tokio::spawn(async move {
+                mgr.prepare_session(session_id.clone()).await;
+                match mgr.clone().init_session(session_id.clone()).await {
+                    Ok(()) => {
+                        if has_mcp_feature(&features) {
+                            mgr.schedule_mcp_init(session_id.clone(), features);
+                        }
+                        mgr.spawn_replay_openclaw_offline_messages();
+                        if let Some(resume_id) = resume_for_restore {
+                            match mgr.restore_dialogue_from_history(&resume_id).await {
+                                Ok(count) => tracing::info!(
+                                    device_id = %mgr.device_id(),
+                                    session_id = %resume_id,
+                                    restored = count,
+                                    "已恢复历史会话上下文"
+                                ),
+                                Err(e) => tracing::warn!(
+                                    device_id = %mgr.device_id(),
+                                    session_id = %resume_id,
+                                    "恢复历史会话失败: {e:#}"
+                                ),
+                            }
+                        }
                     }
-                    mgr.spawn_replay_openclaw_offline_messages();
-                    if let Some(resume_id) = resume_for_restore {
-                        match mgr.restore_dialogue_from_history(&resume_id).await {
-                            Ok(count) => tracing::info!(
-                                device_id = %mgr.device_id(),
-                                session_id = %resume_id,
-                                restored = count,
-                                "已恢复历史会话上下文"
-                            ),
-                            Err(e) => tracing::warn!(
-                                device_id = %mgr.device_id(),
-                                session_id = %resume_id,
-                                "恢复历史会话失败: {e:#}"
-                            ),
+                    Err(e) => {
+                        tracing::error!(
+                            device_id = %mgr.device_id(),
+                            "init_session 失败: {e:#}"
+                        );
+                        if mgr.requires_fresh_hello() {
+                            mgr.mark_need_fresh_hello();
                         }
                     }
                 }
-                Err(e) => {
-                    tracing::error!(
-                        device_id = %mgr.device_id(),
-                        "init_session 失败: {e:#}"
-                    );
-                    if chat_mgr.requires_fresh_hello() {
-                        chat_mgr.mark_need_fresh_hello();
-                    }
-                }
-            }
-
-            responses.push(hello);
+            });
         }
         xiaozhi_core::message::MCP => {
             if let Some(payload) = msg.payload.as_ref() {

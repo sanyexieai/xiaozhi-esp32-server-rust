@@ -24,6 +24,7 @@ use crate::auth::decode_token;
 use crate::extractors::{AdminUser, AuthUser};
 use crate::handlers::devices;
 use crate::ota_test;
+use xiaozhi_config::AppConfig;
 
 #[derive(Debug, Deserialize)]
 pub struct SimulatorWsQuery {
@@ -69,12 +70,14 @@ pub async fn get_config(
 ) -> Json<Value> {
     let cfg = load_ota_json(&state);
     let (ws_url, env_key) = resolve_default_ws_url(&cfg);
+    let local_ws_url = local_server_ws_url(&state.app_config.read());
     let default_sim = state
         .db
         .ensure_web_simulator_device(claims.sub)
         .ok();
     json_data(json!({
         "ws_url": ws_url,
+        "local_ws_url": local_ws_url,
         "env": env_key,
         "ws_proxy_path": "/api/admin/device-simulator/ws",
         "protocol_version": 1,
@@ -113,12 +116,14 @@ pub async fn get_user_config(
 ) -> Json<Value> {
     let cfg = load_ota_json(&state);
     let (ws_url, env_key) = resolve_default_ws_url(&cfg);
+    let local_ws_url = local_server_ws_url(&state.app_config.read());
     let default_sim = state
         .db
         .ensure_web_simulator_device(claims.sub)
         .ok();
     json_data(json!({
         "ws_url": ws_url,
+        "local_ws_url": local_ws_url,
         "env": env_key,
         "ws_proxy_path": "/api/user/device-chat/ws",
         "protocol_version": 1,
@@ -164,15 +169,16 @@ pub async fn user_ws_handler(
     }
 
     let upstream_device_id = device_id.clone();
-    let upstream_url = params
+    let upstream_url = if let Some(url) = params
         .ws_url
         .as_deref()
         .map(str::trim)
         .filter(|s| !s.is_empty())
-        .map(String::from)
-        .or_else(|| resolve_default_ws_url(&load_ota_json(&state)).0);
-
-    let upstream_url = upstream_url.ok_or(StatusCode::BAD_REQUEST)?;
+    {
+        url.to_string()
+    } else {
+        local_server_ws_url(&state.app_config.read())
+    };
     let protocol_version = params.protocol_version;
 
     Ok(ws.on_upgrade(move |client| async move {
@@ -229,15 +235,16 @@ pub async fn ws_handler(
     // 多端在线：直接使用逻辑 device_id，由 EndpointHub 与硬件端共存
     let upstream_device_id = device_id.clone();
 
-    let upstream_url = params
+    let upstream_url = if let Some(url) = params
         .ws_url
         .as_deref()
         .map(str::trim)
         .filter(|s| !s.is_empty())
-        .map(String::from)
-        .or_else(|| resolve_default_ws_url(&load_ota_json(&state)).0);
-
-    let upstream_url = upstream_url.ok_or(StatusCode::BAD_REQUEST)?;
+    {
+        url.to_string()
+    } else {
+        local_server_ws_url(&state.app_config.read())
+    };
     let protocol_version = params.protocol_version;
 
     Ok(ws.on_upgrade(move |client| async move {
@@ -257,6 +264,13 @@ pub async fn ws_handler(
             );
         }
     }))
+}
+
+fn local_server_ws_url(app: &AppConfig) -> String {
+    format!(
+        "ws://127.0.0.1:{}/xiaozhi/v1/",
+        app.websocket.port
+    )
 }
 
 fn authenticate_token(
